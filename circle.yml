@@ -1,0 +1,30 @@
+machine:
+  environment:
+    S6_V: v1.17.2.0
+    CONTAINER_NAME: quay.io/redsift/go-render
+  services:
+    - docker
+
+checkout:
+  post:
+    - git fetch --tags
+
+dependencies:
+  override:
+    - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/$S6_V/s6-overlay-amd64.tar.gz | tar xz
+    - docker info
+    - |
+        sudo docker build -t $CONTAINER_NAME .
+        VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
+        echo "Tagging as $CONTAINER_NAME:$VERSION"
+        docker tag $CONTAINER_NAME:latest $CONTAINER_NAME:$VERSION
+test:
+  override:
+    - docker run -d $CONTAINER_NAME; sleep 10
+
+deployment:
+  prod:
+    branch: master
+    commands:
+      - docker login -e $QUAY_EMAIL -u $QUAY_USER -p $QUAY_PASS quay.io
+      - docker push $CONTAINER_NAME

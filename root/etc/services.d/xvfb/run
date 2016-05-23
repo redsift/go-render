@@ -1,0 +1,3 @@
+#!/usr/bin/execlineb -P
+
+export DISPLAY=:1 Xvfb :1

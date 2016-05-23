@@ -1,0 +1,10 @@
+# Glide YAML configuration file
+# Set this to your fully qualified package name, e.g.
+# github.com/Masterminds/foo. This should be the
+# top level package.
+package: main
+
+# Declare your project's dependencies.
+import:
+  - package: gopkg.in/alecthomas/kingpin.v2
+  - package: github.com/ividence/go-webkit2/webkit2
