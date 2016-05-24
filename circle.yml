@@ -14,13 +14,15 @@ dependencies:
     - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/$S6_V/s6-overlay-amd64.tar.gz | tar xz
     - docker info
     - |
+        sudo docker build -t go-render-build .
+        docker run -ti -v ~/go-render:/opt/gopath/src/github.com/redsift/go-render go-render-build "cd /opt/gopath/src/github.com/redsift/go-render && glide install && go build render.go"
         sudo docker build -t $CONTAINER_NAME .
         VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
         echo "Tagging as $CONTAINER_NAME:$VERSION"
         docker tag $CONTAINER_NAME:latest $CONTAINER_NAME:$VERSION
 test:
   override:
-    - docker run -d $CONTAINER_NAME; sleep 10
+    - docker run $CONTAINER_NAME render version
 
 deployment:
   prod:

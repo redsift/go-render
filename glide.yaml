@@ -7,4 +7,9 @@ package: main
 # Declare your project's dependencies.
 import:
   - package: gopkg.in/alecthomas/kingpin.v2
-  - package: github.com/ividence/go-webkit2/webkit2
+  - package: github.com/auroralaboratories/go-webkit2/webkit2
+  - package: github.com/auroralaboratories/gotk3/cairo
+  - package: github.com/auroralaboratories/gotk3/gdk
+  - package: github.com/auroralaboratories/gotk3/glib
+  - package: github.com/auroralaboratories/gotk3/gtk
+  - package: github.com/satori/go.uuid
