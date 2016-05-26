@@ -1,6 +1,12 @@
-hash: 8001c8562ba112be89a5dd0545036b609dc87bf7bfad67f3d57fb01ca98a991b
-updated: 2016-05-24T11:42:54.217666498Z
+hash: 6fd707c1ebb78cb61e922faeee087016c8b021d01d5a3163000870a790b23113
+updated: 2016-05-26T16:54:55.916301961Z
 imports:
+- name: github.com/alecthomas/template
+  version: a0175ee3bccc567396460bf5acd36800cb10c49c
+  subpackages:
+  - parse
+- name: github.com/alecthomas/units
+  version: 2efee857e7cfd4f3d0138cc3cbb1b4966962b93a
 - name: github.com/auroralaboratories/go-webkit2
   version: a72bc98e210736c0d06505c4e78dd37701f2fcd6
   subpackages:
@@ -16,7 +22,8 @@ imports:
 - name: github.com/satori/go.uuid
   version: f9ab0dce87d815821e221626b772e3475a0d2749
 - name: github.com/sqs/gojs
-  version: 80bdfa8b7d0a0c118220bece71083f2527e7bbc4
+  version: 0574c0e191634a5f4c489fb003f307d9ed6da3fd
+  repo: https://github.com/Redsift/gojs
 - name: gopkg.in/alecthomas/kingpin.v2
   version: 8cccfa8eb2e3183254457fb1749b2667fbc364c7
 devImports: []

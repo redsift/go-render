@@ -1,5 +1,5 @@
-FROM ubuntu:15.10
-MAINTAINER Rahul Powar email: rahul@redsift.io version: 1.1.101
+FROM ubuntu:16.04
+MAINTAINER Rahul Powar email: rahul@redsift.io version: 1.1.102
 
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
@@ -15,7 +15,7 @@ ENV GOPATH=/opt/gopath PATH=$PATH:/usr/local/go/bin
 
 RUN cd /tmp && \
 	curl -O https://storage.googleapis.com/golang/go$GO_VERSION.linux-amd64.tar.gz && \
-	tar xvf go$GO_VERSION.linux-amd64.tar.gz && \
+	tar xvf go$GO_VERSION.linux-amd64.tar.gz > /dev/null && \
 	mv go /usr/local && \
 	rm -Rf /tmp/* && \
 	mkdir -p $GOPATH && \

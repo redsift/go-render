@@ -9,6 +9,11 @@ Simple webkit2 based rasterizer.
 `xdpyinfo` can provide stats on the virtual frame buffer.
 
 
+# Metadata
+
+render metadata www.google.com
+render metadata file:///opt/gopath/src/github.com/redsift/go-render/test/local.html
+
 ## Format
 
 --format="{{.Title}}" to just grab the title
