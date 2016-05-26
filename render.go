@@ -1,4 +1,4 @@
-package main
+package render
 
 import (
 	"runtime"
@@ -8,34 +8,81 @@ import (
 	"github.com/auroralaboratories/gotk3/gtk"
 	"github.com/sqs/gojs"
 	"errors"
-	"fmt"
+	"time"
 	"image"
-	"os"
-	"strconv"
-	"image/png"
 )
 
-var ErrLoadFailed = errors.New("load-failed")
-var ErrViewClosed = errors.New("view-closed")
+var (
+	ErrLoadFailed = errors.New("load-failed")
+	ErrViewClosed = errors.New("view-closed")
+	ErrTimeout = errors.New("timeout")
+	ErrNoImage = errors.New("no-image")
+	ErrNoTiming =errors.New("load-not-timed")
+)
 
 var gtkOnce sync.Once
 
-type view struct {
+
+func newTimeout(t *time.Duration) chan bool {
+	timeout := make(chan bool, 1)
+	if t == nil {
+		go func() {
+			time.Sleep(*t)
+			timeout <- true
+		}()
+	}
+	return timeout
+}
+
+type View struct {
 	*webkit2.WebView
 	load        chan struct{}
 	lastLoadErr error
 	closed bool
+
+	loadRequested 	*time.Time
+	loadStarted 	*time.Time
+	loadFinished 	*time.Time
 }
 
-func (v *view) LoadURI(url string) error {
+func (v *View) TimeToStart() (time.Duration, error) {
+	if v.loadRequested == nil || v.loadStarted == nil {
+		return 0, ErrNoTiming
+	}
+
+	return v.loadStarted.Sub(*v.loadRequested), nil
+}
+
+func (v *View) TimeToLoad() (time.Duration, error) {
+	if v.loadStarted == nil || v.loadFinished == nil {
+		return 0, ErrNoTiming
+	}
+
+	return v.loadFinished.Sub(*v.loadStarted), nil
+}
+
+func (v *View) TimeToFinish() (time.Duration, error) {
+	if v.loadRequested == nil || v.loadFinished == nil {
+		return 0, ErrNoTiming
+	}
+
+	return v.loadFinished.Sub(*v.loadRequested), nil
+}
+
+func (v *View) LoadURI(url string) error {
 	if v.closed {
 		return ErrViewClosed
 	}
 
 	v.load = make(chan struct{}, 1)
 	v.lastLoadErr = nil
-	glib.IdleAdd(func() bool {
+	v.loadRequested = nil
+	v.loadStarted = nil
+	v.loadFinished = nil
 
+	glib.IdleAdd(func() bool {
+		t := time.Now()
+		v.loadRequested = &t
 		v.WebView.LoadURI(url)
 		return false
 	})
@@ -43,15 +90,20 @@ func (v *view) LoadURI(url string) error {
 	return nil
 }
 
-func (v *view) LoadHTML(content, baseURI string) error {
+func (v *View) LoadHTML(content, baseURI string) error {
 	if v.closed {
 		return ErrViewClosed
 	}
 
 	v.load = make(chan struct{}, 1)
 	v.lastLoadErr = nil
-	glib.IdleAdd(func() bool {
+	v.loadRequested = nil
+	v.loadStarted = nil
+	v.loadFinished = nil
 
+	glib.IdleAdd(func() bool {
+		t := time.Now()
+		v.loadRequested = &t
 		v.WebView.LoadHTML(content, baseURI)
 		return false
 	})
@@ -59,29 +111,27 @@ func (v *view) LoadHTML(content, baseURI string) error {
 	return nil
 }
 
-func (v *view) EvaluateJavaScript(script string) (result interface{}, err error) {
+func (v *View)NewSnapshot(t *time.Duration) (result *image.RGBA, err error) {
 	if v.closed {
 		return nil, ErrViewClosed
 	}
 
-	resultChan := make(chan interface{}, 1)
+	resultChan := make(chan *image.RGBA, 1)
 	errChan := make(chan error, 1)
+	timeout := newTimeout(t)
 
 	glib.IdleAdd(func() bool {
-		v.WebView.RunJavaScript(script, func(result *gojs.Value, err error) {
-			glib.IdleAdd(func() bool {
-				if err == nil {
-					goval, err := result.GoValue()
-					if err != nil {
-						errChan <- err
-						return false
-					}
-					resultChan <- goval
-				} else {
-					errChan <- err
-				}
-				return false
-			})
+		v.GetSnapshot(func(img *image.RGBA, err error) {
+			if err != nil {
+				errChan <- err
+				return
+			}
+			if img == nil {
+				errChan <- ErrNoImage
+				return
+			}
+
+			resultChan <- img
 		})
 		return false
 	})
@@ -91,20 +141,65 @@ func (v *view) EvaluateJavaScript(script string) (result interface{}, err error)
 		return result, nil
 	case err = <-errChan:
 		return nil, err
+	case <-timeout:
+		return nil, ErrTimeout
 	}
 }
 
-// Wait waits for the current page to finish loading.
-func (v *view) Wait() error {
+func (v *View) EvaluateJavaScript(script string, t *time.Duration) (result interface{}, err error) {
+	if v.closed {
+		return nil, ErrViewClosed
+	}
+
+	resultChan := make(chan interface{}, 1)
+	errChan := make(chan error, 1)
+	timeout := newTimeout(t)
+
+	glib.IdleAdd(func() bool {
+		v.WebView.RunJavaScript(script, func(result *gojs.Value, err error) {
+			if err == nil {
+				goval, err := result.GoValue()
+				if err != nil {
+					errChan <- err
+					return
+				}
+				resultChan <- goval
+			} else {
+				errChan <- err
+			}
+			return
+		})
+		return false
+	})
+
+	select {
+	case result = <-resultChan:
+		return result, nil
+	case err = <-errChan:
+		return nil, err
+	case <-timeout:
+		return nil, ErrTimeout
+	}
+}
+
+// waits for the current page to finish loading.
+func (v *View) Wait(t *time.Duration) error {
 	if v.closed {
 		return ErrViewClosed
 	}
 
-	<-v.load
-	return v.lastLoadErr
+	timeout := newTimeout(t)
+
+	select {
+	case <-timeout:
+		return ErrTimeout
+	case <-v.load:
+		return v.lastLoadErr
+	}
+
 }
 
-func (v *view) Close() {
+func (v *View) Close() {
 	if v.closed {
 		return
 	}
@@ -134,30 +229,25 @@ func (r *renderer) start() {
 	})
 }
 
-func (r *renderer) NewView() *view {
-	c := make(chan *view, 1)
-	defer close(c)
+func (r *renderer) NewView(appName, appVersion string, autoLoadImages, consoleStdout bool) *View {
+	c := make(chan *View, 1)
 
 	r.Lock()
 
 	glib.IdleAdd(func() bool {
 		webView := webkit2.NewWebView()
 		settings := webView.Settings()
-		settings.SetEnableWriteConsoleMessagesToStdout(true)
-		settings.SetUserAgentWithApplicationDetails("go-render", "v1")
-		v := &view{WebView: webView}
+		settings.SetAutoLoadImages(autoLoadImages)
+		settings.SetEnableWriteConsoleMessagesToStdout(consoleStdout)
+		settings.SetUserAgentWithApplicationDetails(appName, appVersion)
+		v := &View{WebView: webView}
 		loadChangedHandler, _ := webView.Connect("load-changed", func(_ *glib.Object, loadEvent webkit2.LoadEvent) {
+			t := time.Now()
 			switch loadEvent {
+			case webkit2.LoadStarted:
+				v.loadStarted = &t
 			case webkit2.LoadFinished:
-				webView.GetSnapshot(func(img *image.RGBA, err error) {
-					if err != nil {
-						fmt.Printf("INLINE GetSnapshot error: %q", err)
-						return
-					}
-
-					println("SNAP OK!")
-				})
-
+				v.loadFinished = &t
 				v.load <- struct{}{}
 			}
 		})
@@ -173,80 +263,3 @@ func (r *renderer) NewView() *view {
 
 	return <-c
 }
-
-func main() {
-	println("--------GO---------")
-
-	r := NewRenderer()
-	v := r.NewView()
-	if err := v.LoadURI("http://www.shazam.com"); err != nil {
-		panic(err)
-	}
-	defer v.Close()
-
-	if err := v.Wait(); err != nil {
-		panic(err)
-	}
-
-	println(v.Title())
-	println(v.URI())
-
-/*
-	c := make(chan *gojs.Value, 1)
-	defer close(c)
-	glib.IdleAdd(func() bool {
-		v.RunJavaScript("window.location.hostname", func(val *gojs.Value, err error) {
-			if err != nil {
-				panic(err)
-			} else {
-				fmt.Printf("Hostname (from JavaScript): %q\n", val)
-				c <- val
-			}
-		})
-
-		return false
-	})
-*/
-
-	c := make(chan error, 1)
-	glib.IdleAdd(func() bool {
-		v.GetSnapshot(func(img *image.RGBA, err error) {
-			defer close(c)
-			if err != nil {
-				fmt.Printf("GetSnapshot error: %q", err)
-				fmt.Printf("GetSnapshot img: %v", img)
-				c <- err
-				return
-			}
-			if img == nil {
-				fmt.Printf("!img")
-				return
-			}
-
-			if img.Pix == nil {
-				fmt.Printf("!img.Pix")
-				return
-			}
-
-			if img.Stride == 0 || img.Rect.Max.X == 0 || img.Rect.Max.Y == 0 {
-				fmt.Printf("!img.Stride or !img.Rect.Max.X or !img.Rect.Max.Y")
-				return
-			}
-
-			f, err := os.Create("x" + strconv.Itoa(1) + ".png")
-			png.Encode(f, img)
-
-			fmt.Println("Grab finished.")
-		})
-		return false
-	})
-
-	result := <- c
-	if result != nil {
-		println(result.Error())
-	}
-}
-
-// LIBGL_DEBUG=verbose
-// http://unix.stackexchange.com/questions/1437/what-does-libgl-always-indirect-1-actually-do
-// LIBGL_ALWAYS_INDIRECT=1

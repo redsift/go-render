@@ -14,15 +14,22 @@ dependencies:
     - cd root; curl -k -L https://github.com/just-containers/s6-overlay/releases/download/$S6_V/s6-overlay-amd64.tar.gz | tar xz
     - docker info
     - |
-        sudo docker build -t go-render-build .
-        docker run -ti -v ~/go-render:/opt/gopath/src/github.com/redsift/go-render go-render-build "cd /opt/gopath/src/github.com/redsift/go-render && glide install && go build render.go"
-        sudo docker build -t $CONTAINER_NAME .
         VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
+        echo -e package version'\n'const \('\n'Tag=\"`git describe --exact-match --tags`\"'\n'Commit=\"`git rev-parse --short HEAD`\"'\n'\)'\n' > version/tag.go
+        sudo docker build -t go-render-build .
+        docker run -ti -v ~/go-render:/opt/gopath/src/github.com/redsift/go-render go-render-build -v $CIRCLE_ARTIFACTS:/opt/gopath/bin "cd /opt/gopath/src/github.com/redsift/go-render && glide install && go install"
+        mkdir -p root/usr/bin/local
+        cp $CIRCLE_ARTIFACTS/render root/usr/bin/local
+        sudo docker build -t $CONTAINER_NAME .
         echo "Tagging as $CONTAINER_NAME:$VERSION"
         docker tag $CONTAINER_NAME:latest $CONTAINER_NAME:$VERSION
 test:
   override:
     - docker run $CONTAINER_NAME render version
+    - |
+        TEST=$(docker run $CONTAINER_NAME render metadata -f "{{.Title}}" http://www.google.com)
+        echo $TEST
+        [ "$TEST" == "Google" ]
 
 deployment:
   prod:
