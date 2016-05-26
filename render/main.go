@@ -11,6 +11,7 @@ import (
 	"text/template"
 	"bytes"
 	"strings"
+	"github.com/redsift/go-render/version"
 )
 
 
@@ -18,7 +19,7 @@ var (
 	app      		= kingpin.New("render", "Command-line WebKit based web page rendering tool.")
 	debugOpt    		= app.Flag("debug", "Enable debug mode.").Short('d').Default("false").Bool()
 	uaAppNameOpt   		= app.Flag("user-agent-app", "User agent application name.").Default("go-render").String()
-	uaAppVersionOpt 	= app.Flag("user-agent-version", "User agent application version.").Default("v1").String()
+	uaAppVersionOpt 	= app.Flag("user-agent-version", "User agent application version.").Default(version.Tag).String()
 	consoleOpt    		= app.Flag("console", "Output webpage console to stdout.").Default("false").Bool()
 	imagesOpt    		= app.Flag("images", "Load images from webpage.").Bool()
 	timeoutOpt		= app.Flag("timeout", "Timeout for page load.").Short('t').Duration()
@@ -65,7 +66,10 @@ type metadata struct {
 }
 
 func newLoadedView(url *url.URL, autoLoadImages bool) *render.View {
-	u := url.String()
+	if url.Scheme == "" {
+		url.Scheme = "http"
+	}
+ 	u := url.String()
 
 	r := render.NewRenderer()
 	v := r.NewView(*uaAppNameOpt, *uaAppVersionOpt, autoLoadImages, *consoleOpt)
@@ -83,10 +87,29 @@ func newLoadedView(url *url.URL, autoLoadImages bool) *render.View {
 	return v
 }
 
+func formatInterface(m interface{}, tmpl string) string {
+	var b []byte
+	var err error
+
+	if tmpl != "" {
+		temp, err := template.New("").Funcs(templateFuncs).Parse(tmpl)
+		app.FatalIfError(err, "Unable to parse template")
+
+		buffer := new(bytes.Buffer)
+		err = temp.Execute(buffer, m)
+		app.FatalIfError(err, "Unable to format metadata")
+
+		b = buffer.Bytes()
+	} else {
+		b, err = json.MarshalIndent(m, "", "\t")
+		app.FatalIfError(err, "Unable to format metadata")
+	}
+	return string(b)
+}
 
 func main() {
 	app.HelpFlag.Short('h')
-
+	app.Version(version.Version())
 	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
 	case snapshotCommand.FullCommand(): {
 		al := true	// Give that this is a snapshot, load the images
@@ -145,23 +168,7 @@ func main() {
 			Timing: timing{ Start: ts.Seconds(), Load: tl.Seconds(), Finish: tf.Seconds() },
 		}
 
-		var b []byte
-		var err error
-
-		if *metadataFormat != "" {
-			temp, err := template.New("").Funcs(templateFuncs).Parse(*metadataFormat)
-			app.FatalIfError(err, "Unable to parse template")
-
-			buffer := new(bytes.Buffer)
-			err = temp.Execute(buffer, m)
-			app.FatalIfError(err, "Unable to format metadata")
-
-			b = buffer.Bytes()
-		} else {
-			b, err = json.MarshalIndent(m, "", "\t")
-			app.FatalIfError(err, "Unable to format metadata")
-		}
-		fmt.Println(string(b))
+		fmt.Println(formatInterface(m, *metadataFormat))
 	}
 	default: {
 		app.FatalUsage("No known command supplied")
