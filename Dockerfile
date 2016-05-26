@@ -34,10 +34,9 @@ RUN cd /tmp && \
 RUN update-locale
 
 # Change the onetime and fixup stage to terminate on error
-ENV S6_BEHAVIOUR_IF_STAGE2_FAILS 2
-
-# Xvfb display number
-ENV DISPLAY=:1
+# Xvfb display number set to 1
+# Prevent libGL errors with indirect mode http://unix.stackexchange.com/questions/1437/what-does-libgl-always-indirect-1-actually-do
+ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2 DISPLAY=:1 LIBGL_ALWAYS_INDIRECT=1
 
 # S6 default entry point is the init added from the overlay
 ENTRYPOINT [ "/init" ]

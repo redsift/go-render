@@ -14,6 +14,7 @@ import (
 	"github.com/redsift/go-render/version"
 )
 
+// LIBGL_DEBUG=verbose to debug libGl issues
 
 var (
 	app      		= kingpin.New("render", "Command-line WebKit based web page rendering tool.")
@@ -40,18 +41,7 @@ var (
 	metadataOpt		= metadataCommand.Arg("url", "URL").Required().URL()
 )
 
-// Based on docker template functions
-var templateFuncs = template.FuncMap{
-	"json": func(m interface{}) string {
-		a, _ := json.MarshalIndent(m, "", "\t")
-		return string(a)
-	},
-	"split": strings.Split,
-	"join":  strings.Join,
-	"title": strings.Title,
-	"lower": strings.ToLower,
-	"upper": strings.ToUpper,
-}
+
 
 type timing struct {
 	Start float64
@@ -90,6 +80,19 @@ func newLoadedView(url *url.URL, autoLoadImages bool) *render.View {
 func formatInterface(m interface{}, tmpl string) string {
 	var b []byte
 	var err error
+
+	// Based on docker template functions
+	var templateFuncs = template.FuncMap{
+		"json": func(m interface{}) string {
+			a, _ := json.MarshalIndent(m, "", "\t")
+			return string(a)
+		},
+		"split": strings.Split,
+		"join":  strings.Join,
+		"title": strings.Title,
+		"lower": strings.ToLower,
+		"upper": strings.ToUpper,
+	}
 
 	if tmpl != "" {
 		temp, err := template.New("").Funcs(templateFuncs).Parse(tmpl)
@@ -235,6 +238,3 @@ func main() {
 		*/
 }
 
-// LIBGL_DEBUG=verbose
-// http://unix.stackexchange.com/questions/1437/what-does-libgl-always-indirect-1-actually-do
-// LIBGL_ALWAYS_INDIRECT=1
