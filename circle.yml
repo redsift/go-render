@@ -16,6 +16,7 @@ dependencies:
     - |
         VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
         echo -e package version'\n'const \('\n'Tag=\"`git describe --exact-match --tags`\"'\n'Commit=\"`git rev-parse --short HEAD`\"'\n'\)'\n' > version/tag.go
+        set -e
         sudo docker build -t go-render-build .
         docker run -ti -v ~/go-render:/opt/gopath/src/github.com/redsift/go-render go-render-build -v $CIRCLE_ARTIFACTS:/opt/gopath/bin "cd /opt/gopath/src/github.com/redsift/go-render && glide install && go install"
         mkdir -p root/usr/bin/local
