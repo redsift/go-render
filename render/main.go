@@ -11,16 +11,23 @@ import (
 	"text/template"
 	"bytes"
 	"strings"
-	"github.com/redsift/go-render/version"
 )
 
 // LIBGL_DEBUG=verbose to debug libGl issues
+
+// These version tags are set from the git values during CI built
+// and need to be var so ldflags can change them
+var (
+	Tag=""
+	Commit=""
+	Timestamp=""
+)
 
 var (
 	app      		= kingpin.New("render", "Command-line WebKit based web page rendering tool.")
 	debugOpt    		= app.Flag("debug", "Enable debug mode.").Short('d').Default("false").Bool()
 	uaAppNameOpt   		= app.Flag("user-agent-app", "User agent application name.").Default("go-render").String()
-	uaAppVersionOpt 	= app.Flag("user-agent-version", "User agent application version.").Default(version.Tag).String()
+	uaAppVersionOpt 	= app.Flag("user-agent-version", "User agent application version.").Default(Tag).String()
 	consoleOpt    		= app.Flag("console", "Output webpage console to stdout.").Default("false").Bool()
 	imagesOpt    		= app.Flag("images", "Load images from webpage.").Bool()
 	timeoutOpt		= app.Flag("timeout", "Timeout for page load.").Short('t').Duration()
@@ -42,7 +49,6 @@ var (
 )
 
 
-
 type timing struct {
 	Start float64
 	Load float64
@@ -53,6 +59,24 @@ type metadata struct {
 	Title string
 	URI string
 	Timing timing
+}
+
+func Git() string {
+	if Tag == "" {
+		if Commit == "" {
+			return "unknown"
+		}
+		return Commit
+	}
+	return fmt.Sprintf("%s-%s", Tag, Commit)
+}
+
+func Version() string {
+	git := Git()
+	if Timestamp == "" {
+		return git
+	}
+	return fmt.Sprintf("%s-%s", git, Timestamp)
 }
 
 func newLoadedView(url *url.URL, autoLoadImages bool) *render.View {
@@ -112,7 +136,7 @@ func formatInterface(m interface{}, tmpl string) string {
 
 func main() {
 	app.HelpFlag.Short('h')
-	app.Version(version.Version())
+	app.Version(Version())
 	switch kingpin.MustParse(app.Parse(os.Args[1:])) {
 	case snapshotCommand.FullCommand(): {
 		al := true	// Give that this is a snapshot, load the images

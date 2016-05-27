@@ -3,7 +3,7 @@
 set -e
 cd /opt/gopath/src/github.com/redsift/go-render
 glide install
-go install -ldflags "-X version.Tag `date -u '+%Y-%m-%d_%I:%M:%S%p'` -X version.Commit GITHASH" github.com/redsift/go-render/render
+go install -ldflags "-X main.Timestamp=`date -u '+%Y-%m-%d_%I:%M:%S%p'` -X main.Tag=$TAG -X main.Commit=$COMMIT" github.com/redsift/go-render/render
 go test github.com/redsift/go-render
 
 cp /opt/gopath/bin/render /usr/local/bin/render
