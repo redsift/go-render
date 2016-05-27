@@ -25,13 +25,13 @@ mkdir -p build/etc/ssl/certs/
 cp /etc/ssl/certs/ca-certificates.crt build/etc/ssl/certs/ca-certificates.crt
 
 mkdir -p build/etc/fonts/
-cp -R /etc/fonts build/etc/fonts
+cp -R /etc/fonts build/etc/
 
 mkdir -p build/usr/share/X11/xkb
-cp -R /usr/share/X11/xkb build/usr/share/X11/xkb
+cp -R /usr/share/X11/xkb build/usr/share/X11/
 
 mkdir -p build/usr/share/fonts
-cp -R /usr/share/fonts build/usr/share/fonts
+cp -R /usr/share/fonts build/usr/share/
 
 mkdir -p build/usr/share/locale
 cp /usr/share/locale/locale.alias build/usr/share/locale/locale.alias
@@ -40,7 +40,7 @@ mkdir -p build/usr/share/glib-2.0/schemas
 cp /usr/share/glib-2.0/schemas/gschemas.compiled build/usr/share/glib-2.0/schemas/gschemas.compiled
 
 mkdir -p build/usr/share/poppler/cMap
-cp -R /usr/share/poppler/cMap build/usr/share/poppler/cMap
+cp -R /usr/share/poppler/cMap build/usr/share/poppler/
 
 dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/local/bin/render \
@@ -177,7 +177,7 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/lib/x86_64-linux-gnu/libdrm_radeon.so.1.0.1 \
                 /usr/lib/x86_64-linux-gnu/libedit.so.2 \
                 /usr/lib/x86_64-linux-gnu/libedit.so.2.0.53 \
-                /usr/lib/x86_64-linux-gnu/libelf-0.163.so \
+                /usr/lib/x86_64-linux-gnu/libelf-0.165.so \
                 /usr/lib/x86_64-linux-gnu/libelf.so.1 \
                 /usr/lib/x86_64-linux-gnu/libenchant.so.1 \
                 /usr/lib/x86_64-linux-gnu/libenchant.so.1.6.0 \
@@ -331,6 +331,15 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0 \
                 /usr/lib/xorg/protocol.txt \
 
+# Ensure there are no broken links
+BROKEN=$(find build -xtype l)
+if [ -z "$BROKEN" ]
+then
+	echo "All symlinks ok"
+else
+	echo "Links broken $BROKEN"
+	exit 1
+fi
 
 #LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/mesa/:/usr/lib/x86_64-linux-gnu/mesa-egl/
 
