@@ -19,8 +19,9 @@ dependencies:
         set -e
         sudo docker build -t go-render-build .
         docker run -ti -v ~/go-render:/opt/gopath/src/github.com/redsift/go-render -v $CIRCLE_ARTIFACTS:/opt/gopath/bin go-render-build /bin/bash -c "cd /opt/gopath/src/github.com/redsift/go-render && glide install && go install github.com/redsift/go-render/render && go test github.com/redsift/go-render"
-        mkdir -p root/usr/bin/local
-        cp $CIRCLE_ARTIFACTS/render root/usr/bin/local
+        cd runtime
+        mkdir -p root/usr/local/bin
+        cp $CIRCLE_ARTIFACTS/render root/usr/local/bin
         sudo docker build -t $CONTAINER_NAME .
         echo "Tagging as $CONTAINER_NAME:$VERSION"
         docker tag $CONTAINER_NAME:latest $CONTAINER_NAME:$VERSION

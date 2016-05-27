@@ -1,0 +1,4 @@
+#!/usr/bin/execlineb -P
+
+background { /usr/bin/Xvfb :1 }
+with-contenv /usr/local/bin/render $@
