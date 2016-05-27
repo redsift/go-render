@@ -18,6 +18,7 @@ mkdir -p build/usr/local/share/fonts
 mkdir -p build/etc
 cp /etc/drirc /etc/gai.conf /etc/localtime /etc/services /etc/locale.alias build/etc/.
 
+mkdir -p build/etc/gtk-3.0/
 cp /etc/gtk-3.0/settings.ini build/etc/gtk-3.0/settings.ini
 
 mkdir -p build/etc/ssl/certs/
