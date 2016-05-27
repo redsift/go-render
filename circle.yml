@@ -19,7 +19,7 @@ dependencies:
         echo -e package version'\n'const \('\n'Tag=\"`git describe --exact-match --tags`\"'\n'Commit=\"`git rev-parse --short HEAD`\"'\n'\)'\n' > version/tag.go
         set -e
         sudo docker build -t $BUILD_CONTAINER_NAME .
-        docker run -ti -v ~/go-render:/opt/gopath/src/github.com/redsift/go-render -v $CIRCLE_ARTIFACTS:/opt/gopath/bin --entrypoint=/opt/gopath/src/github.com/redsift/go-render/circle-build.sh $BUILD_CONTAINER_NAME
+        docker run -ti -v ~/go-render:/opt/gopath/src/github.com/redsift/go-render -v $CIRCLE_ARTIFACTS:/opt/gopath/bin $BUILD_CONTAINER_NAME /opt/gopath/src/github.com/redsift/go-render/circle-build.sh
         cd build
         sudo docker build -t $CONTAINER_NAME .
         echo "Tagging as $CONTAINER_NAME:$VERSION"
