@@ -23,4 +23,4 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /bin/bash \
                 /usr/local/bin/render-xvfb
 
-echo "ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/mesa/" >> ./build/Dockerfile
+echo "ENV LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/mesa/:/usr/lib/x86_64-linux-gnu/mesa-egl/ DISPLAY=:1 LIBGL_ALWAYS_INDIRECT=1" >> ./build/Dockerfile
