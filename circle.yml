@@ -1,6 +1,7 @@
 machine:
   environment:
     S6_V: v1.17.2.0
+    BUILD_CONTAINER_NAME: quay.io/redsift/go-render-build
     CONTAINER_NAME: quay.io/redsift/go-render
   services:
     - docker
@@ -17,8 +18,8 @@ dependencies:
         VERSION=$(git describe --exact-match --tags 2>/dev/null || git rev-parse --short HEAD)
         echo -e package version'\n'const \('\n'Tag=\"`git describe --exact-match --tags`\"'\n'Commit=\"`git rev-parse --short HEAD`\"'\n'\)'\n' > version/tag.go
         set -e
-        sudo docker build -t go-render-build .
-        docker run -ti -v ~/go-render:/opt/gopath/src/github.com/redsift/go-render -v $CIRCLE_ARTIFACTS:/opt/gopath/bin go-render-build /bin/bash -c "cd /opt/gopath/src/github.com/redsift/go-render && glide install && go install github.com/redsift/go-render/render && go test github.com/redsift/go-render"
+        sudo docker build -t $BUILD_CONTAINER_NAME .
+        docker run -ti -v ./circle-build.sh:/usr/local/bin/circle-build.sh -v ~/go-render:/opt/gopath/src/github.com/redsift/go-render -v $CIRCLE_ARTIFACTS:/opt/gopath/bin --entrypoint=/usr/local/bin/circle-build.sh $BUILD_CONTAINER_NAME
         cd runtime
         mkdir -p root/usr/local/bin
         cp $CIRCLE_ARTIFACTS/render root/usr/local/bin
@@ -27,11 +28,8 @@ dependencies:
         docker tag $CONTAINER_NAME:latest $CONTAINER_NAME:$VERSION
 test:
   override:
-    - docker run $CONTAINER_NAME version
-    - |
-        TEST=$(docker run $CONTAINER_NAME metadata -f "{{.Title}}" http://www.google.com)
-        echo $TEST
-        [ "$TEST" == "Google" ]
+    - docker run $CONTAINER_NAME --version
+
 
 deployment:
   prod:
@@ -39,3 +37,4 @@ deployment:
     commands:
       - docker login -e $QUAY_EMAIL -u $QUAY_USER -p $QUAY_PASS quay.io
       - docker push $CONTAINER_NAME
+      - docker push $BUILD_CONTAINER_NAME

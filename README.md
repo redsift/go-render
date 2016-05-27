@@ -18,3 +18,10 @@ render metadata file:///opt/gopath/src/github.com/redsift/go-render/test/local.h
 
 --format="{{.Title}}" to just grab the title
 -f "{{json .Timing}}" to get the timing information
+
+
+
+    - |
+        TEST=$(docker run $CONTAINER_NAME metadata -f "{{.Title}}" http://www.google.com)
+        echo $TEST
+        [ "$TEST" == "Google" ]
