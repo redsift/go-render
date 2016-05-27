@@ -25,3 +25,15 @@ render metadata file:///opt/gopath/src/github.com/redsift/go-render/test/local.h
         TEST=$(docker run $CONTAINER_NAME metadata -f "{{.Title}}" http://www.google.com)
         echo $TEST
         [ "$TEST" == "Google" ]
+        
+        
+## Tracing
+        
+        sudo apt-get install strace
+        
+        sudo strace -f -o $CIRCLE_ARTIFACTS/bash.strace.out -p 49350 
+        
+        ./filter-trace.py bash.strace.out > needed-files.out
+        
+        sudo strace -e trace=open,stat,execve -s 80 -f -p 47324
+        
