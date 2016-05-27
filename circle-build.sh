@@ -66,6 +66,14 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /etc/ld.so.conf.d/x86_64-linux-gnu_GL.conf \
                 /bin/bash \
                 /usr/local/bin/render-xvfb \
+                /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/MiniBrowser \
+                /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/WebKitDatabaseProcess \
+                /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/WebKitNetworkProcess \
+                /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/WebKitPluginProcess \
+                /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/WebKitPluginProcess2 \
+                /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/WebKitWebProcess \
+                /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/injected-bundle \
+                /usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/injected-bundle/libwebkit2gtkinjectedbundle.so \
                 /lib/x86_64-linux-gnu/libaudit.so.1 \
                 /lib/x86_64-linux-gnu/libaudit.so.1.0.0 \
                 /lib/x86_64-linux-gnu/libbsd.so.0 \
