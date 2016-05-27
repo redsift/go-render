@@ -1,4 +1,8 @@
-#!/usr/bin/execlineb -P
+#!/usr/bin/execlineb -S0
 
 background { /usr/bin/Xvfb :1 }
-with-contenv /usr/local/bin/render $@
+importas XPID !
+foreground { /usr/local/bin/render $@ }
+importas REXIT ?
+exec kill ${XPID}
+exit $REXIT
