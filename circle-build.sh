@@ -20,6 +20,8 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /bin/importas \
                 /bin/exit \
                 /usr/bin/Xvfb \
+                /bin/sh \
+                /usr/bin/xkbcomp \
                 /usr/share/X11/xkb/rules/evdev \
                 /usr/lib/x86_64-linux-gnu/dri/swrast_dri.so \
                 /usr/lib/xorg/protocol.txt \
@@ -43,7 +45,7 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
 
 #LD_LIBRARY_PATH=/usr/lib/x86_64-linux-gnu/mesa/:/usr/lib/x86_64-linux-gnu/mesa-egl/
 
-echo -e "ENV DISPLAY=:1 LIBGL_ALWAYS_INDIRECT=1 \m RUN /sbin/ldconfig.real" >> ./build/Dockerfile
+echo "ENV DISPLAY=:1 LIBGL_ALWAYS_INDIRECT=1 \nRUN /sbin/ldconfig.real" >> ./build/Dockerfile
 
 
 
