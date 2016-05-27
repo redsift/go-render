@@ -46,6 +46,8 @@ mkdir -p build/usr/share/zoneinfo
 cp -R /usr/share/zoneinfo build/usr/share/
 
 dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
+                /etc/machine-id \
+                /var/lib/dbus/machine-id \
                 /usr/local/bin/render \
                 /usr/bin/execlineb \
                 /bin/background \
