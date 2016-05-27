@@ -217,13 +217,21 @@ type renderer struct {
 	sync.Mutex
 }
 
+const ENV_DISPLAY = "DISPLAY"
+const X_LOCK_PARENT = "/tmp"
+
 func (r *renderer) waitForX() error {
-	d := os.Getenv("DISPLAY")
+	d := os.Getenv(ENV_DISPLAY)
 	if d == "" {
-		return errors.New("No DISPLAY variable set for X")
+		return fmt.Errorf("No %s variable set for X", ENV_DISPLAY)
 	}
 
-	f := fmt.Sprint("/tmp/.X%s-lock", d)
+	if len(d) < 2 {
+		return fmt.Errorf("%s variable %q is malformed", ENV_DISPLAY, d)
+	}
+	n := d[1:]
+
+	f := fmt.Sprintf("%s/.X%s-lock", X_LOCK_PARENT, n)
 
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -231,7 +239,8 @@ func (r *renderer) waitForX() error {
 	}
 	defer w.Close()
 
-	timeout := newTimeout(10 * time.Second)
+	t := 10 * time.Second
+	timeout := newTimeout(&t)
 	found := make(chan struct{})
 
 	go func() {
@@ -239,20 +248,26 @@ func (r *renderer) waitForX() error {
 			select {
 			case event := <-w.Events:
 				if event.Op&fsnotify.Create == fsnotify.Create {
-					log.Println("Create file:", event.Name)
+					if event.Name == f {
+						// got it
+						close(found)
+					}
 				}
 			case err := <-w.Errors:
-				panic(err)
+				if err != nil {
+					panic(err)
+				} // else the watcher was closed
 			}
 		}
 	}()
 
-	err = w.Add("/tmp")
+	err = w.Add(X_LOCK_PARENT)
 	if err != nil {
-		err
+		return err
 	}
 
 	if _, err := os.Stat(f); os.IsNotExist(err) {
+		log.Printf("Waiting on %s", f)
 		select {
 		case <-timeout:
 			return ErrNoX
