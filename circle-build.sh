@@ -42,6 +42,9 @@ cp /usr/share/glib-2.0/schemas/gschemas.compiled build/usr/share/glib-2.0/schema
 mkdir -p build/usr/share/poppler/cMap
 cp -R /usr/share/poppler/cMap build/usr/share/poppler/
 
+mkdir -p build/usr/share/zoneinfo
+cp -R /usr/share/zoneinfo build/usr/share/
+
 dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/local/bin/render \
                 /usr/bin/execlineb \
@@ -66,46 +69,47 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /lib/x86_64-linux-gnu/libaudit.so.1 \
                 /lib/x86_64-linux-gnu/libaudit.so.1.0.0 \
                 /lib/x86_64-linux-gnu/libbsd.so.0 \
-                /lib/x86_64-linux-gnu/libbsd.so.0.7.0 \
+                /lib/x86_64-linux-gnu/libbsd.so.0.8.2 \
                 /lib/x86_64-linux-gnu/libbz2.so.1.0 \
                 /lib/x86_64-linux-gnu/libbz2.so.1.0.4 \
-                /lib/x86_64-linux-gnu/libc-2.21.so \
+                /lib/x86_64-linux-gnu/libc-2.23.so \
                 /lib/x86_64-linux-gnu/libc.so.6 \
                 /lib/x86_64-linux-gnu/libdbus-1.so.3 \
-                /lib/x86_64-linux-gnu/libdbus-1.so.3.14.3 \
-                /lib/x86_64-linux-gnu/libdl-2.21.so \
+                /lib/x86_64-linux-gnu/libdbus-1.so.3.14.6 \
+                /lib/x86_64-linux-gnu/libdl-2.23.so \
                 /lib/x86_64-linux-gnu/libdl.so.2 \
                 /lib/x86_64-linux-gnu/libexpat.so.1 \
                 /lib/x86_64-linux-gnu/libexpat.so.1.6.0 \
                 /lib/x86_64-linux-gnu/libgcc_s.so.1 \
                 /lib/x86_64-linux-gnu/libgcrypt.so.20 \
-                /lib/x86_64-linux-gnu/libgcrypt.so.20.0.3 \
+                /lib/x86_64-linux-gnu/libgcrypt.so.20.0.5 \
                 /lib/x86_64-linux-gnu/libglib-2.0.so.0 \
-                /lib/x86_64-linux-gnu/libglib-2.0.so.0.4600.2 \
+                /lib/x86_64-linux-gnu/libglib-2.0.so.0.4800.0 \
                 /lib/x86_64-linux-gnu/libgpg-error.so.0 \
-                /lib/x86_64-linux-gnu/libgpg-error.so.0.15.0 \
+                /lib/x86_64-linux-gnu/libgpg-error.so.0.17.0 \
                 /lib/x86_64-linux-gnu/liblzma.so.5 \
                 /lib/x86_64-linux-gnu/liblzma.so.5.0.0 \
-                /lib/x86_64-linux-gnu/libm-2.21.so \
+                /lib/x86_64-linux-gnu/libm-2.23.so \
                 /lib/x86_64-linux-gnu/libm.so.6 \
-                /lib/x86_64-linux-gnu/libnss_dns-2.21.so \
+                /lib/x86_64-linux-gnu/libnss_dns-2.23.so \
                 /lib/x86_64-linux-gnu/libnss_dns.so.2 \
-                /lib/x86_64-linux-gnu/libnss_files-2.21.so \
+                /lib/x86_64-linux-gnu/libnss_files-2.23.so \
                 /lib/x86_64-linux-gnu/libnss_files.so.2 \
                 /lib/x86_64-linux-gnu/libpcre.so.3 \
-                /lib/x86_64-linux-gnu/libpcre.so.3.13.1 \
+                /lib/x86_64-linux-gnu/libpcre.so.3.13.2 \
                 /lib/x86_64-linux-gnu/libpng12.so.0 \
-                /lib/x86_64-linux-gnu/libpng12.so.0.51.0 \
+                /lib/x86_64-linux-gnu/libpng12.so.0.54.0 \
                 /lib/x86_64-linux-gnu/libprocps.so.4 \
-                /lib/x86_64-linux-gnu/libpthread-2.21.so \
+                /lib/x86_64-linux-gnu/libprocps.so.4.0.0 \
+                /lib/x86_64-linux-gnu/libpthread-2.23.so \
                 /lib/x86_64-linux-gnu/libpthread.so.0 \
-                /lib/x86_64-linux-gnu/libresolv-2.21.so \
+                /lib/x86_64-linux-gnu/libresolv-2.23.so \
                 /lib/x86_64-linux-gnu/libresolv.so.2 \
-                /lib/x86_64-linux-gnu/librt-2.21.so \
+                /lib/x86_64-linux-gnu/librt-2.23.so \
                 /lib/x86_64-linux-gnu/librt.so.1 \
                 /lib/x86_64-linux-gnu/libselinux.so.1 \
                 /lib/x86_64-linux-gnu/libsystemd.so.0 \
-                /lib/x86_64-linux-gnu/libsystemd.so.0.10.2 \
+                /lib/x86_64-linux-gnu/libsystemd.so.0.14.0 \
                 /lib/x86_64-linux-gnu/libtinfo.so.5 \
                 /lib/x86_64-linux-gnu/libtinfo.so.5.9 \
                 /lib/x86_64-linux-gnu/libz.so.1 \
@@ -152,7 +156,7 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/lib/x86_64-linux-gnu/libXxf86vm.so.1 \
                 /usr/lib/x86_64-linux-gnu/libXxf86vm.so.1.0.0 \
                 /usr/lib/x86_64-linux-gnu/libatk-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libatk-1.0.so.0.21609.1 \
+                /usr/lib/x86_64-linux-gnu/libatk-1.0.so.0.21809.1 \
                 /usr/lib/x86_64-linux-gnu/libatk-bridge-2.0.so.0 \
                 /usr/lib/x86_64-linux-gnu/libatk-bridge-2.0.so.0.0.0 \
                 /usr/lib/x86_64-linux-gnu/libatspi.so.0 \
@@ -160,13 +164,13 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/lib/x86_64-linux-gnu/libboost_filesystem.so.1.58.0 \
                 /usr/lib/x86_64-linux-gnu/libboost_system.so.1.58.0 \
                 /usr/lib/x86_64-linux-gnu/libcairo-gobject.so.2 \
-                /usr/lib/x86_64-linux-gnu/libcairo-gobject.so.2.11400.2 \
+                /usr/lib/x86_64-linux-gnu/libcairo-gobject.so.2.11400.6 \
                 /usr/lib/x86_64-linux-gnu/libcairo.so.2 \
-                /usr/lib/x86_64-linux-gnu/libcairo.so.2.11400.2 \
+                /usr/lib/x86_64-linux-gnu/libcairo.so.2.11400.6 \
                 /usr/lib/x86_64-linux-gnu/libdatrie.so.1 \
-                /usr/lib/x86_64-linux-gnu/libdatrie.so.1.3.2 \
+                /usr/lib/x86_64-linux-gnu/libdatrie.so.1.3.3 \
                 /usr/lib/x86_64-linux-gnu/libdbus-glib-1.so.2 \
-                /usr/lib/x86_64-linux-gnu/libdbus-glib-1.so.2.3.2 \
+                /usr/lib/x86_64-linux-gnu/libdbus-glib-1.so.2.3.3 \
                 /usr/lib/x86_64-linux-gnu/libdrm.so.2 \
                 /usr/lib/x86_64-linux-gnu/libdrm.so.2.4.0 \
                 /usr/lib/x86_64-linux-gnu/libdrm_amdgpu.so.1 \
@@ -186,56 +190,59 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/lib/x86_64-linux-gnu/libffi.so.6 \
                 /usr/lib/x86_64-linux-gnu/libffi.so.6.0.4 \
                 /usr/lib/x86_64-linux-gnu/libfontconfig.so.1 \
-                /usr/lib/x86_64-linux-gnu/libfontconfig.so.1.8.0 \
+                /usr/lib/x86_64-linux-gnu/libfontconfig.so.1.9.0 \
                 /usr/lib/x86_64-linux-gnu/libfontenc.so.1 \
                 /usr/lib/x86_64-linux-gnu/libfontenc.so.1.0.0 \
                 /usr/lib/x86_64-linux-gnu/libfreetype.so.6 \
-                /usr/lib/x86_64-linux-gnu/libfreetype.so.6.11.1 \
+                /usr/lib/x86_64-linux-gnu/libfreetype.so.6.12.1 \
                 /usr/lib/x86_64-linux-gnu/libgbm.so.1 \
                 /usr/lib/x86_64-linux-gnu/libgbm.so.1.0.0 \
                 /usr/lib/x86_64-linux-gnu/libgdk-3.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgdk-3.so.0.1600.7 \
+                /usr/lib/x86_64-linux-gnu/libgdk-3.so.0.1800.9 \
                 /usr/lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0.3200.1 \
+                /usr/lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0.3200.2 \
                 /usr/lib/x86_64-linux-gnu/libgeoclue.so.0 \
+                /usr/lib/x86_64-linux-gnu/libgeoclue.so.0.0.0 \
                 /usr/lib/x86_64-linux-gnu/libgio-2.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgio-2.0.so.0.4600.2 \
+                /usr/lib/x86_64-linux-gnu/libgio-2.0.so.0.4800.0 \
                 /usr/lib/x86_64-linux-gnu/libglapi.so.0 \
                 /usr/lib/x86_64-linux-gnu/libglapi.so.0.0.0 \
                 /usr/lib/x86_64-linux-gnu/libgmodule-2.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgmodule-2.0.so.0.4600.2 \
+                /usr/lib/x86_64-linux-gnu/libgmodule-2.0.so.0.4800.0 \
                 /usr/lib/x86_64-linux-gnu/libgmp.so.10 \
-                /usr/lib/x86_64-linux-gnu/libgmp.so.10.2.0 \
+                /usr/lib/x86_64-linux-gnu/libgmp.so.10.3.0 \
                 /usr/lib/x86_64-linux-gnu/libgnutls.so.30 \
+                /usr/lib/x86_64-linux-gnu/libgnutls.so.30.6.2 \
                 /usr/lib/x86_64-linux-gnu/libgobject-2.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgobject-2.0.so.0.4600.2 \
+                /usr/lib/x86_64-linux-gnu/libgobject-2.0.so.0.4800.0 \
                 /usr/lib/x86_64-linux-gnu/libgraphite2.so.3 \
                 /usr/lib/x86_64-linux-gnu/libgraphite2.so.3.0.1 \
                 /usr/lib/x86_64-linux-gnu/libgstapp-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgstapp-1.0.so.0.603.0 \
+                /usr/lib/x86_64-linux-gnu/libgstapp-1.0.so.0.801.0 \
                 /usr/lib/x86_64-linux-gnu/libgstaudio-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgstaudio-1.0.so.0.603.0 \
+                /usr/lib/x86_64-linux-gnu/libgstaudio-1.0.so.0.801.0 \
                 /usr/lib/x86_64-linux-gnu/libgstbase-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgstbase-1.0.so.0.603.0 \
+                /usr/lib/x86_64-linux-gnu/libgstbase-1.0.so.0.801.0 \
                 /usr/lib/x86_64-linux-gnu/libgstfft-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgstfft-1.0.so.0.603.0 \
+                /usr/lib/x86_64-linux-gnu/libgstfft-1.0.so.0.801.0 \
                 /usr/lib/x86_64-linux-gnu/libgstpbutils-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgstpbutils-1.0.so.0.603.0 \
+                /usr/lib/x86_64-linux-gnu/libgstpbutils-1.0.so.0.801.0 \
                 /usr/lib/x86_64-linux-gnu/libgstreamer-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgstreamer-1.0.so.0.603.0 \
+                /usr/lib/x86_64-linux-gnu/libgstreamer-1.0.so.0.801.0 \
                 /usr/lib/x86_64-linux-gnu/libgsttag-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgsttag-1.0.so.0.603.0 \
+                /usr/lib/x86_64-linux-gnu/libgsttag-1.0.so.0.801.0 \
                 /usr/lib/x86_64-linux-gnu/libgstvideo-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgstvideo-1.0.so.0.603.0 \
+                /usr/lib/x86_64-linux-gnu/libgstvideo-1.0.so.0.801.0 \
                 /usr/lib/x86_64-linux-gnu/libgtk-3.so.0 \
-                /usr/lib/x86_64-linux-gnu/libgtk-3.so.0.1600.7 \
+                /usr/lib/x86_64-linux-gnu/libgtk-3.so.0.1800.9 \
                 /usr/lib/x86_64-linux-gnu/libharfbuzz-icu.so.0 \
                 /usr/lib/x86_64-linux-gnu/libharfbuzz-icu.so.0.10000.1 \
                 /usr/lib/x86_64-linux-gnu/libharfbuzz.so.0 \
                 /usr/lib/x86_64-linux-gnu/libharfbuzz.so.0.10000.1 \
                 /usr/lib/x86_64-linux-gnu/libhogweed.so.4 \
-                /usr/lib/x86_64-linux-gnu/libhogweed.so.4.1 \
+                /usr/lib/x86_64-linux-gnu/libhogweed.so.4.2 \
                 /usr/lib/x86_64-linux-gnu/libhyphen.so.0 \
+                /usr/lib/x86_64-linux-gnu/libhyphen.so.0.3.0 \
                 /usr/lib/x86_64-linux-gnu/libicudata.so.55 \
                 /usr/lib/x86_64-linux-gnu/libicudata.so.55.1 \
                 /usr/lib/x86_64-linux-gnu/libicui18n.so.55 \
@@ -243,30 +250,30 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/lib/x86_64-linux-gnu/libicuuc.so.55 \
                 /usr/lib/x86_64-linux-gnu/libicuuc.so.55.1 \
                 /usr/lib/x86_64-linux-gnu/libidn.so.11 \
-                /usr/lib/x86_64-linux-gnu/libidn.so.11.6.11 \
+                /usr/lib/x86_64-linux-gnu/libidn.so.11.6.15 \
                 /usr/lib/x86_64-linux-gnu/libjavascriptcoregtk-4.0.so.18 \
-                /usr/lib/x86_64-linux-gnu/libjavascriptcoregtk-4.0.so.18.1.12 \
+                /usr/lib/x86_64-linux-gnu/libjavascriptcoregtk-4.0.so.18.2.17 \
                 /usr/lib/x86_64-linux-gnu/libjpeg.so.8 \
                 /usr/lib/x86_64-linux-gnu/libjpeg.so.8.0.2 \
                 /usr/lib/x86_64-linux-gnu/libmirclient.so.9 \
                 /usr/lib/x86_64-linux-gnu/libmircommon.so.5 \
                 /usr/lib/x86_64-linux-gnu/libmirprotobuf.so.3 \
                 /usr/lib/x86_64-linux-gnu/libnettle.so.6 \
-                /usr/lib/x86_64-linux-gnu/libnettle.so.6.1 \
+                /usr/lib/x86_64-linux-gnu/libnettle.so.6.2 \
                 /usr/lib/x86_64-linux-gnu/libnotify.so.4 \
                 /usr/lib/x86_64-linux-gnu/libnotify.so.4.0.0 \
                 /usr/lib/x86_64-linux-gnu/liborc-0.4.so.0 \
-                /usr/lib/x86_64-linux-gnu/liborc-0.4.so.0.23.0 \
+                /usr/lib/x86_64-linux-gnu/liborc-0.4.so.0.25.0 \
                 /usr/lib/x86_64-linux-gnu/libp11-kit.so.0 \
                 /usr/lib/x86_64-linux-gnu/libp11-kit.so.0.1.0 \
                 /usr/lib/x86_64-linux-gnu/libpango-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libpango-1.0.so.0.3600.8 \
+                /usr/lib/x86_64-linux-gnu/libpango-1.0.so.0.3800.1 \
                 /usr/lib/x86_64-linux-gnu/libpangocairo-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libpangocairo-1.0.so.0.3600.8 \
+                /usr/lib/x86_64-linux-gnu/libpangocairo-1.0.so.0.3800.1 \
                 /usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0 \
-                /usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0.3600.8 \
+                /usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0.3800.1 \
                 /usr/lib/x86_64-linux-gnu/libpixman-1.so.0 \
-                /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.32.6 \
+                /usr/lib/x86_64-linux-gnu/libpixman-1.so.0.33.6 \
                 /usr/lib/x86_64-linux-gnu/libprotobuf-lite.so.9 \
                 /usr/lib/x86_64-linux-gnu/libprotobuf-lite.so.9.0.1 \
                 /usr/lib/x86_64-linux-gnu/libproxy.so.1 \
@@ -280,9 +287,9 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/lib/x86_64-linux-gnu/libstdc++.so.6 \
                 /usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21 \
                 /usr/lib/x86_64-linux-gnu/libtasn1.so.6 \
-                /usr/lib/x86_64-linux-gnu/libtasn1.so.6.4.2 \
+                /usr/lib/x86_64-linux-gnu/libtasn1.so.6.5.1 \
                 /usr/lib/x86_64-linux-gnu/libthai.so.0 \
-                /usr/lib/x86_64-linux-gnu/libthai.so.0.2.2 \
+                /usr/lib/x86_64-linux-gnu/libthai.so.0.2.4 \
                 /usr/lib/x86_64-linux-gnu/libtxc_dxtn.so \
                 /usr/lib/x86_64-linux-gnu/libtxc_dxtn_s2tc.so.0.0.0 \
                 /usr/lib/x86_64-linux-gnu/libwayland-client.so.0 \
@@ -294,9 +301,9 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/lib/x86_64-linux-gnu/libwayland-server.so.0 \
                 /usr/lib/x86_64-linux-gnu/libwayland-server.so.0.1.0 \
                 /usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.0.so.37 \
-                /usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.0.so.37.6.8 \
+                /usr/lib/x86_64-linux-gnu/libwebkit2gtk-4.0.so.37.11.12 \
                 /usr/lib/x86_64-linux-gnu/libwebp.so.5 \
-                /usr/lib/x86_64-linux-gnu/libwebp.so.5.0.3 \
+                /usr/lib/x86_64-linux-gnu/libwebp.so.5.0.4 \
                 /usr/lib/x86_64-linux-gnu/libxcb-dri2.so.0 \
                 /usr/lib/x86_64-linux-gnu/libxcb-dri2.so.0.0.0 \
                 /usr/lib/x86_64-linux-gnu/libxcb-dri3.so.0 \
@@ -320,7 +327,7 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/lib/x86_64-linux-gnu/libxkbfile.so.1 \
                 /usr/lib/x86_64-linux-gnu/libxkbfile.so.1.0.2 \
                 /usr/lib/x86_64-linux-gnu/libxml2.so.2 \
-                /usr/lib/x86_64-linux-gnu/libxml2.so.2.9.2 \
+                /usr/lib/x86_64-linux-gnu/libxml2.so.2.9.3 \
                 /usr/lib/x86_64-linux-gnu/libxshmfence.so.1 \
                 /usr/lib/x86_64-linux-gnu/libxshmfence.so.1.0.0 \
                 /usr/lib/x86_64-linux-gnu/libxslt.so.1 \
@@ -329,7 +336,7 @@ dockerize -n -o ./build -e /usr/local/bin/render-xvfb --filetools \
                 /usr/lib/x86_64-linux-gnu/mesa-egl/libEGL.so.1.0.0 \
                 /usr/lib/x86_64-linux-gnu/mesa/libGL.so.1 \
                 /usr/lib/x86_64-linux-gnu/mesa/libGL.so.1.2.0 \
-                /usr/lib/xorg/protocol.txt \
+                /usr/lib/xorg/protocol.txt
 
 # Ensure there are no broken links
 BROKEN=$(find build -xtype l)
