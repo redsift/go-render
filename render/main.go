@@ -85,14 +85,16 @@ func newLoadedView(url *url.URL, autoLoadImages bool) *render.View {
 	}
  	u := url.String()
 
-	r := render.NewRenderer()
+	r, err := render.NewRenderer()
+	app.FatalIfError(err, "Unable to create renderer")
+
 	v := r.NewView(*uaAppNameOpt, *uaAppVersionOpt, autoLoadImages, *consoleOpt)
 
 	if *debugOpt {
 		fmt.Printf("Loading URL:%q\n", u)
 	}
 
-	err := v.LoadURI(u)
+	err = v.LoadURI(u)
 	app.FatalIfError(err, "Unable to request URL %q", u)
 
 	err = v.Wait(timeoutOpt)

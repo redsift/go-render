@@ -1,5 +1,5 @@
-hash: 6fd707c1ebb78cb61e922faeee087016c8b021d01d5a3163000870a790b23113
-updated: 2016-05-26T16:54:55.916301961Z
+hash: 0209ece3ec0ce7f72c2986929a1f5192d3202951bfcdb47d56102ddd5df2a2ae
+updated: 2016-05-27T18:50:46.7519325Z
 imports:
 - name: github.com/alecthomas/template
   version: a0175ee3bccc567396460bf5acd36800cb10c49c
@@ -19,11 +19,17 @@ imports:
   - glib
   - gtk
   - pango
+- name: github.com/fsnotify/fsnotify
+  version: 30411dbcefb7a1da7e84f75530ad3abe4011b4f8
 - name: github.com/satori/go.uuid
   version: f9ab0dce87d815821e221626b772e3475a0d2749
 - name: github.com/sqs/gojs
   version: 0574c0e191634a5f4c489fb003f307d9ed6da3fd
   repo: https://github.com/Redsift/gojs
+- name: golang.org/x/sys
+  version: d4feaf1a7e61e1d9e79e6c4e76c6349e9cab0a03
+  subpackages:
+  - unix
 - name: gopkg.in/alecthomas/kingpin.v2
   version: 8cccfa8eb2e3183254457fb1749b2667fbc364c7
 devImports: []

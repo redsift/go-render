@@ -7,9 +7,13 @@ import (
 	"github.com/auroralaboratories/gotk3/glib"
 	"github.com/auroralaboratories/gotk3/gtk"
 	"github.com/sqs/gojs"
+	"github.com/fsnotify/fsnotify"
 	"errors"
 	"time"
 	"image"
+	"os"
+	"fmt"
+	"log"
 )
 
 var (
@@ -17,7 +21,8 @@ var (
 	ErrViewClosed = errors.New("view-closed")
 	ErrTimeout = errors.New("timeout")
 	ErrNoImage = errors.New("no-image")
-	ErrNoTiming =errors.New("load-not-timed")
+	ErrNoTiming = errors.New("load-not-timed")
+	ErrNoX = errors.New("no-x-display")
 )
 
 var gtkOnce sync.Once
@@ -212,10 +217,64 @@ type renderer struct {
 	sync.Mutex
 }
 
-func NewRenderer() *renderer {
+func (r *renderer) waitForX() error {
+	d := os.Getenv("DISPLAY")
+	if d == "" {
+		return errors.New("No DISPLAY variable set for X")
+	}
+
+	f := fmt.Sprint("/tmp/.X%s-lock", d)
+
+	w, err := fsnotify.NewWatcher()
+	if err != nil {
+		return err
+	}
+	defer w.Close()
+
+	timeout := newTimeout(10 * time.Second)
+	found := make(chan struct{})
+
+	go func() {
+		for {
+			select {
+			case event := <-w.Events:
+				if event.Op&fsnotify.Create == fsnotify.Create {
+					log.Println("Create file:", event.Name)
+				}
+			case err := <-w.Errors:
+				panic(err)
+			}
+		}
+	}()
+
+	err = w.Add("/tmp")
+	if err != nil {
+		err
+	}
+
+	if _, err := os.Stat(f); os.IsNotExist(err) {
+		select {
+		case <-timeout:
+			return ErrNoX
+		case <-found:
+			return nil
+		}
+
+	}
+
+	return nil
+}
+
+func NewRenderer() (*renderer, error) {
 	r := renderer{}
+
+	if err := r.waitForX(); err != nil {
+		return nil, err
+	}
+
 	r.start()
-	return &r
+
+	return &r, nil
 }
 
 // Ensure that the GTK+ main loop has started. If it has already been
@@ -228,6 +287,7 @@ func (r *renderer) start() {
 		}()
 	})
 }
+
 
 func (r *renderer) NewView(appName, appVersion string, autoLoadImages, consoleStdout bool) *View {
 	c := make(chan *View, 1)

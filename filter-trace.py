@@ -37,6 +37,8 @@ def main():
 		print("usage: filter-trace.py <strace output...>")
 		exit(1)
 
+	# TODO: Fails on
+	# 49495 execve("/usr/lib/x86_64-linux-gnu/webkit2gtk-4.0/WebKitWebProcess", ["/usr/lib/x86_64-linux-gnu/webkit"..., "8"], [/* 17 vars */] <unfinished ...>
 	strace_pattern = re.compile('(open|stat|execve)\("([^"]+)".*=\s-?\d\s?(.*)')
 
 	for arg_file in sys.argv[1:]:

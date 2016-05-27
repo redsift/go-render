@@ -5,7 +5,11 @@ import (
 )
 
 func TestTitle(t *testing.T) {
-	r := NewRenderer()
+	r, err := NewRenderer()
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	v := r.NewView("go-render-unit", "none", true, true)
 
 	if err := v.LoadURI("http://www.gooogle.com"); err != nil {

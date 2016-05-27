@@ -16,4 +16,5 @@ import:
   - package: github.com/auroralaboratories/gotk3/glib
   - package: github.com/auroralaboratories/gotk3/gtk
   - package: github.com/satori/go.uuid
+  - package: github.com/fsnotify/fsnotify
 
