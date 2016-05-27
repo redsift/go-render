@@ -32,3 +32,7 @@ vendor
 *.iml
 
 *.png
+
+bash.strace.out
+
+needed-files.out

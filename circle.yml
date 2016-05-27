@@ -9,6 +9,7 @@ machine:
 checkout:
   post:
     - git fetch --tags
+    - sudo apt-get update; sudo apt-get install strace
 
 dependencies:
   override:
