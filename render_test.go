@@ -2,12 +2,11 @@ package render
 
 import (
 	"testing"
-	"github.com/redsift/go-render/version"
 )
 
 func TestTitle(t *testing.T) {
 	r := NewRenderer()
-	v := r.NewView("go-render-unit", version.Tag, true, true)
+	v := r.NewView("go-render-unit", "none", true, true)
 
 	if err := v.LoadURI("http://www.gooogle.com"); err != nil {
 		t.Fatal(err)
