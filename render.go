@@ -25,7 +25,7 @@ var gtkOnce sync.Once
 
 func newTimeout(t *time.Duration) chan bool {
 	timeout := make(chan bool, 1)
-	if t != nil {
+	if t != nil && *t != 0 {
 		go func() {
 			time.Sleep(*t)
 			timeout <- true
