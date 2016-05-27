@@ -4,5 +4,5 @@ background { /usr/bin/Xvfb :1 }
 importas XPID !
 foreground { /usr/local/bin/render $@ }
 importas REXIT ?
-exec kill ${XPID}
+foreground { kill ${XPID} }
 exit $REXIT

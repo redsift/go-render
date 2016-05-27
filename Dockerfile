@@ -4,8 +4,9 @@ MAINTAINER Rahul Powar email: rahul@redsift.io version: 1.1.102
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
     apt-get install -y lsb-release unzip openssl ca-certificates curl rsync gettext-base software-properties-common python-software-properties \
-    	iputils-ping dnsutils build-essential libtool autoconf git dialog man \
+    	iputils-ping dnsutils build-essential libtool autoconf git dialog man python-pip \
     	libwebkit2gtk-4.0-dev libmagickwand-dev xvfb x11-utils && \
+    	pip install dockerize && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 ENV GO_VERSION=1.6.2 GLIDE=0.10.2

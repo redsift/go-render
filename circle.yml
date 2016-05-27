@@ -27,9 +27,9 @@ dependencies:
         docker tag $CONTAINER_NAME:latest $CONTAINER_NAME:$VERSION
 test:
   override:
-    - docker run $CONTAINER_NAME /usr/local/render version
+    - docker run $CONTAINER_NAME version
     - |
-        TEST=$(docker run $CONTAINER_NAME /usr/local/render metadata -f "{{.Title}}" http://www.google.com)
+        TEST=$(docker run $CONTAINER_NAME metadata -f "{{.Title}}" http://www.google.com)
         echo $TEST
         [ "$TEST" == "Google" ]
 
