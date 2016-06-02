@@ -60,18 +60,18 @@ var (
 	snapshotQuality		= snapshotCommand.Flag("quality", "Quality of image when using lossy compression, values > 100 indicate lossless if available for the selected format").PlaceHolder("[0-100]").Default("75").Int()
 	snapshotOutput		= snapshotCommand.Flag("output", "Filename for output").Short('o').String()
 	snapshotNoImagesOpt    	= snapshotCommand.Flag("noimages", "Don't load images from webpage.").Bool()
-	snapshotOpt		= snapshotCommand.Arg("url", URLHelp).URL()
+	snapshotOpt		= URLSList(snapshotCommand.Arg("url", URLHelp))
 
 	javascriptCommand     	= app.Command("javascript", "Execute javascript in the context of the page.")
 	javascriptContent	= javascriptCommand.Flag("js", "JavaScript file or string to execute").Short('j').Required().String()
 	javascriptFormat	= javascriptCommand.Flag("format", "Format the output using the given go template").Short('f').Default("").String()
 	javascriptImagesOpt    	= javascriptCommand.Flag("images", "Load images from webpage.").Default("false").Bool()
-	javascriptOpt		= javascriptCommand.Arg("url", "URL").Required().URL()
+	javascriptOpt		= URLSList(javascriptCommand.Arg("url", URLHelp))
 
 	metadataCommand		= app.Command("metadata", "Get page metadata.")
 	metadataFormat		= metadataCommand.Flag("format", "Format the output using the given go template").Short('f').Default("").String()
 	metadataImagesOpt    	= metadataCommand.Flag("images", "Load images from webpage.").Default("false").Bool()
-	metadataOpt		= metadataCommand.Arg("url", "URL").Required().URL()
+	metadataOpt		= URLSList(metadataCommand.Arg("url", URLHelp))
 )
 
 
@@ -168,17 +168,18 @@ func processURL(arg *url.URL) *url.URL {
 	return arg
 }
 
-func urls(arg *url.URL) chan *url.URL {
+func urls(arg []*url.URL) chan *url.URL {
 	urls := make(chan *url.URL, 1)
 
-	if arg != nil {
-
-		urls <- processURL(arg)
+	go func() {
 		defer close(urls)
-	} else {
-		// stdin
-		go func() {
-			defer close(urls)
+		if arg != nil && len(arg) > 0 {
+
+			for _, u := range arg {
+				urls <- processURL(u)
+			}
+		} else {
+			// stdin
 			scanner := bufio.NewScanner(os.Stdin)
 			for scanner.Scan() {
 				t := scanner.Text()
@@ -189,8 +190,9 @@ func urls(arg *url.URL) chan *url.URL {
 				app.FatalIfError(err, "Could not parse URL")
 				urls <- processURL(u)
 			}
-		}()
-	}
+		}
+	}()
+
 
 	return urls
 }
@@ -349,12 +351,7 @@ func main() {
 		}
 	}
 	case javascriptCommand.FullCommand(): {
-		v := newLoadedView(*javascriptOpt, *javascriptImagesOpt)
-		defer v.Close()
-
 		script := *javascriptContent
-
-
 		if d, err := ioutil.ReadFile(script); err == nil {
 			if *debugOpt {
 				fmt.Printf("JavaScript file read:%s\n", script);
@@ -364,37 +361,47 @@ func main() {
 			app.FatalIfError(err, "Could not read JavaScript file:%s", script)
 		}
 
-		j, err := v.EvaluateJavaScript(script, timeoutOpt)
-		app.FatalIfError(err, "Unable to execute javascript")
+		for u := range urls(*javascriptOpt) {
+			func () {
+				v := newLoadedView(u, *javascriptImagesOpt)
+				defer v.Close()
+				j, err := v.EvaluateJavaScript(script, timeoutOpt)
+				app.FatalIfError(err, "Unable to execute javascript")
 
-		t := reflect.TypeOf(j)
-		if *debugOpt {
-			if j == nil {
-				fmt.Println("JavaScript returned:null");
-			} else {
-				fmt.Printf("JavaScript return type:%s, kind:%s\n", t, t.Kind())
-			}
+				t := reflect.TypeOf(j)
+				if *debugOpt {
+					if j == nil {
+						fmt.Println("JavaScript returned:null");
+					} else {
+						fmt.Printf("JavaScript return type:%s, kind:%s\n", t, t.Kind())
+					}
+				}
+				if t != nil && (t.Kind() == reflect.Map || t.Kind() == reflect.Slice || t.Kind() == reflect.Array) {
+					j = formatInterface(j, *javascriptFormat)
+				}
+				fmt.Println(j)
+			}()
 		}
-		if t != nil && (t.Kind() == reflect.Map || t.Kind() == reflect.Slice || t.Kind() == reflect.Array) {
-			j = formatInterface(j, *javascriptFormat)
-		}
-		fmt.Println(j)
 	}
 	case metadataCommand.FullCommand(): {
-		v := newLoadedView(*metadataOpt, *metadataImagesOpt)
-		defer v.Close()
+		for u := range urls(*metadataOpt) {
+			func() {
+				v := newLoadedView(u, *metadataImagesOpt)
+				defer v.Close()
 
-		ts, _ := v.TimeToStart()
-		tl, _ := v.TimeToLoad()
-		tf, _ := v.TimeToFinish()
+				ts, _ := v.TimeToStart()
+				tl, _ := v.TimeToLoad()
+				tf, _ := v.TimeToFinish()
 
-		m := metadata{
-			Title: v.Title(),
-			URI: v.URI(),
-			Timing: timing{ Start: ts.Seconds(), Load: tl.Seconds(), Finish: tf.Seconds() },
+				m := metadata{
+					Title: v.Title(),
+					URI: v.URI(),
+					Timing: timing{Start: ts.Seconds(), Load: tl.Seconds(), Finish: tf.Seconds() },
+				}
+
+				fmt.Println(formatInterface(m, *metadataFormat))
+			}()
 		}
-
-		fmt.Println(formatInterface(m, *metadataFormat))
 	}
 	default: {
 		app.FatalUsage("No known command supplied")
