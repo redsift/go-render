@@ -36,3 +36,11 @@ vendor
 bash.strace.out
 
 needed-files.out
+
+*.gif
+
+*.jpeg
+
+*.JPG
+
+*.webp

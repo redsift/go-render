@@ -1,5 +1,5 @@
-hash: 0209ece3ec0ce7f72c2986929a1f5192d3202951bfcdb47d56102ddd5df2a2ae
-updated: 2016-05-27T18:50:46.7519325Z
+hash: a784f5b9b16d1a8e00a17f7c1e1944f1bc429091aad4139b5da7977ca0d56b69
+updated: 2016-06-02T15:04:06.391103968Z
 imports:
 - name: github.com/alecthomas/template
   version: a0175ee3bccc567396460bf5acd36800cb10c49c
@@ -19,6 +19,8 @@ imports:
   - glib
   - gtk
   - pango
+- name: github.com/chai2010/webp
+  version: dd526bdb977b38d44bf551e20a298c3d5e0cdff1
 - name: github.com/fsnotify/fsnotify
   version: 30411dbcefb7a1da7e84f75530ad3abe4011b4f8
 - name: github.com/satori/go.uuid

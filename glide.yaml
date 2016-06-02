@@ -17,4 +17,5 @@ import:
   - package: github.com/auroralaboratories/gotk3/gtk
   - package: github.com/satori/go.uuid
   - package: github.com/fsnotify/fsnotify
+  - package: github.com/chai2010/webp
 

@@ -19,12 +19,36 @@ render metadata file:///opt/gopath/src/github.com/redsift/go-render/test/local.h
 --format="{{.Title}}" to just grab the title
 -f "{{json .Timing}}" to get the timing information
 
-
-
     - |
         TEST=$(docker run $CONTAINER_NAME metadata -f "{{.Title}}" http://www.google.com)
         echo $TEST
         [ "$TEST" == "Google" ]
+
+# Javascript
+
+render javascript -j window.location.hostname  www.google.com
+render javascript -j "\"js=\" + window.location.hostname"  www.google.com
+
+## Local .js file
+
+    # ./host.js
+    function t() {
+        return { Hostname: window.location.hostname, Pathname: window.location.pathname };
+    }
+    t();
+    
+render javascript -j ./host.js www.google.com
+render javascript -j ./host.js -f {{.Hostname}} www.google.com
+
+# Snapshot
+
+render snapshot -o google.png www.google.com
+
+render snapshot -o grab-{{.Host}}.png www.google.com www.yahoo.com
+
+From stdin where `urls.txt` is a simple list of URLs separated by a newline
+
+cat urls.txt | render snapshot -o list-{{.Index}}.png
         
         
 ## Tracing

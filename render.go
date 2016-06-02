@@ -14,6 +14,7 @@ import (
 	"os"
 	"fmt"
 	"log"
+	"reflect"
 )
 
 var (
@@ -168,6 +169,15 @@ func (v *View) EvaluateJavaScript(script string, t *time.Duration) (result inter
 					errChan <- err
 					return
 				}
+				// Patch the value type to int64 if a whole number
+				if goval != nil && (reflect.TypeOf(goval).Kind() == reflect.Float64) {
+					f := goval.(float64)
+					if i := int64(f); float64(i) == f {
+						goval = i
+					}
+				}
+
+
 				resultChan <- goval
 			} else {
 				errChan <- err

@@ -22,6 +22,9 @@ RUN cd /tmp && \
 	mkdir -p $GOPATH && \
 	go env GOROOT && go version
 
+# Add the webp mime type as it seems to be missing
+RUN echo -e "\nimage/webp webp" >> /etc/mime.types
+
 # Cleanup default cron tasks
 RUN rm -f /etc/cron.hourly/* /etc/cron.daily/* /etc/cron.weekly/*  /etc/cron.monthly/*
 
