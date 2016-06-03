@@ -62,7 +62,8 @@ or `-f "{{json .Timing}}"` to get the timing information.
     t();
     
     # Execute a local file, exceptions will set a non-zero exit code
-	$ docker run -v test.js:/tmp/host quay.io/redsift/go-render javascript --js /tmp/host/test.js www.google.com
+	$ docker run -v test.js:/tmp/host quay.io/redsift/go-render \ 
+	  	javascript --js /tmp/host/test.js www.google.com
     
 	# Extract a field from the JSON object
 	$ ... javascript -j ./test.js -f {{.Hostname}} www.google.com
