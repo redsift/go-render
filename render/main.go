@@ -257,7 +257,7 @@ func FormatParseFromFilename(n string) Format {
 
 func (f Format) Encode(out io.Writer, img image.Image, quality int) error {
 	switch f {
-	case PNG:
+	case Auto, Unknown, PNG:
 		return png.Encode(out, img)
 	case JPEG:
 		o := jpeg.Options{quality}
