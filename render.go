@@ -1,33 +1,44 @@
+/*
+Package render implements a simple wrapper around Webkit that primarily allows for the capture of screenshots.
+
+This package will typically only compile on a modern Linux distribution and requires a running X server. A utility binary is also provided.
+
+*/
 package render
 
 import (
-	"runtime"
-	"sync"
+	"errors"
+	"fmt"
 	"github.com/auroralaboratories/go-webkit2/webkit2"
 	"github.com/auroralaboratories/gotk3/glib"
 	"github.com/auroralaboratories/gotk3/gtk"
-	"github.com/sqs/gojs"
 	"github.com/fsnotify/fsnotify"
-	"errors"
-	"time"
+	"github.com/sqs/gojs"
 	"image"
-	"os"
-	"fmt"
 	"log"
+	"os"
 	"reflect"
+	"runtime"
+	"sync"
+	"time"
 )
 
 var (
+	// Webkit reports failure of of the page load
 	ErrLoadFailed = errors.New("load-failed")
+	// View has already been closed, not further operations allowed
 	ErrViewClosed = errors.New("view-closed")
+	// Supplied timeout has been triggered
 	ErrTimeout = errors.New("timeout")
+	// Snapshot did not return a usable image
 	ErrNoImage = errors.New("no-image")
+	// No timing information available
 	ErrNoTiming = errors.New("load-not-timed")
+	// ErrNoX Did not find a usable X display server
 	ErrNoX = errors.New("no-x-display")
 )
 
 var gtkOnce sync.Once
-
 
 func newTimeout(t *time.Duration) chan bool {
 	timeout := make(chan bool, 1)
@@ -44,11 +55,11 @@ type View struct {
 	*webkit2.WebView
 	load        chan struct{}
 	lastLoadErr error
-	closed bool
+	closed      bool
 
-	loadRequested 	*time.Time
-	loadStarted 	*time.Time
-	loadFinished 	*time.Time
+	loadRequested *time.Time
+	loadStarted   *time.Time
+	loadFinished  *time.Time
 }
 
 func (v *View) TimeToStart() (time.Duration, error) {
@@ -117,7 +128,7 @@ func (v *View) LoadHTML(content, baseURI string) error {
 	return nil
 }
 
-func (v *View)NewSnapshot(t *time.Duration) (result *image.RGBA, err error) {
+func (v *View) NewSnapshot(t *time.Duration) (result *image.RGBA, err error) {
 	if v.closed {
 		return nil, ErrViewClosed
 	}
@@ -176,7 +187,6 @@ func (v *View) EvaluateJavaScript(script string, t *time.Duration) (result inter
 						goval = i
 					}
 				}
-
 
 				resultChan <- goval
 			} else {
@@ -290,6 +300,7 @@ func (r *renderer) waitForX() error {
 	return nil
 }
 
+// NewRenderer creates a new GTK based rendering context
 func NewRenderer() (*renderer, error) {
 	r := renderer{}
 
@@ -313,7 +324,7 @@ func (r *renderer) start() {
 	})
 }
 
-
+// Create a new Webkit view
 func (r *renderer) NewView(appName, appVersion string, autoLoadImages, consoleStdout bool) *View {
 	c := make(chan *View, 1)
 

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"net/url"
 	"fmt"
 	"gopkg.in/alecthomas/kingpin.v2"
+	"net/url"
 )
 
 type urlList []*url.URL

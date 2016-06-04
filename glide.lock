@@ -1,5 +1,5 @@
-hash: a784f5b9b16d1a8e00a17f7c1e1944f1bc429091aad4139b5da7977ca0d56b69
-updated: 2016-06-02T15:04:06.391103968Z
+hash: bd70318d0cc14cdcfd5aacf4151207a84218faf02a67fbc9627cb06507c7903c
+updated: 2016-06-04T09:43:45.945998746Z
 imports:
 - name: github.com/alecthomas/template
   version: a0175ee3bccc567396460bf5acd36800cb10c49c
@@ -23,15 +23,21 @@ imports:
   version: dd526bdb977b38d44bf551e20a298c3d5e0cdff1
 - name: github.com/fsnotify/fsnotify
   version: 30411dbcefb7a1da7e84f75530ad3abe4011b4f8
+- name: github.com/ricallinson/httphelp
+  version: f8740e04d1c731b44cf4ab02c6bd9c04c54830b2
 - name: github.com/satori/go.uuid
   version: f9ab0dce87d815821e221626b772e3475a0d2749
 - name: github.com/sqs/gojs
   version: 0574c0e191634a5f4c489fb003f307d9ed6da3fd
   repo: https://github.com/Redsift/gojs
 - name: golang.org/x/sys
-  version: d4feaf1a7e61e1d9e79e6c4e76c6349e9cab0a03
+  version: 076b546753157f758b316e59bcb51e6807c04057
   subpackages:
   - unix
+- name: golang.org/x/tools
+  version: b41cbfc0fac050e3a416b4f51df202a101cd2aa5
+  subpackages:
+  - cmd/stringer
 - name: gopkg.in/alecthomas/kingpin.v2
   version: 8cccfa8eb2e3183254457fb1749b2667fbc364c7
 devImports: []

@@ -1,0 +1,27 @@
+package constants
+
+//go:generate $GOPATH/bin/stringer -type=Format
+
+type Format int
+
+const (
+	Auto Format = iota
+	PNG
+	JPEG
+	WEBP
+	GIF
+	MONO
+)
+
+const (
+	MIMEPNG  = "image/png"
+	MIMEJPEG = "image/jpeg"
+	MIMEWEBP = "image/webp"
+	MIMEGIF  = "image/gif"
+)
+
+var mimeList = []string{MIMEPNG, MIMEWEBP, MIMEJPEG, MIMEGIF}
+
+func MIMEList() []string {
+	return mimeList
+}
