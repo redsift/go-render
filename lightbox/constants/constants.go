@@ -2,8 +2,10 @@ package constants
 
 //go:generate $GOPATH/bin/stringer -type=Format
 
+// Format represents a detected image format
 type Format int
 
+// Known image formats
 const (
 	Unknown Format = iota
 	Auto
@@ -14,6 +16,7 @@ const (
 	MONO
 )
 
+// MIME types for known image formats
 const (
 	MIMEPNG  = "image/png"
 	MIMEJPEG = "image/jpeg"
@@ -23,6 +26,7 @@ const (
 
 var mimeList = []string{MIMEPNG, MIMEWEBP, MIMEJPEG, MIMEGIF}
 
+// MIMEList is the MIMT ype list of all known image formats in order of preference
 func MIMEList() []string {
 	return mimeList
 }

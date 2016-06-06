@@ -16,6 +16,7 @@ import (
 	"strings"
 )
 
+// FormatParse converts the string representation of format into the enum
 func FormatParse(n string) (Format, error) {
 	switch strings.ToLower(n) {
 	case "auto":
@@ -35,6 +36,7 @@ func FormatParse(n string) (Format, error) {
 	}
 }
 
+// FormatParseFromFilename returns a format based on the supplied file extension
 func FormatParseFromFilename(n string) (Format, error) {
 	mt := mime.TypeByExtension(filepath.Ext(n))
 
@@ -52,6 +54,7 @@ func FormatParseFromFilename(n string) (Format, error) {
 	}
 }
 
+// FormatParseFromAccept returns a format based on the supplied Accept header
 func FormatParseFromAccept(a string) (Format, error) {
 	ct := httphelp.Negotiate(a, MIMEList())
 
@@ -61,6 +64,11 @@ func FormatParseFromAccept(a string) (Format, error) {
 	return PNG, nil
 }
 
+// Encode writes img in the desired image format f to the out stream. If the selected format
+// is a lossy format, quality between 1-100 represents the strength of compression with 1 being
+// the highest compressions / lowest quality and 100 being the lowest compression / highest quality.
+// If the format supports lossless compression (e.g. WebP) in addition to lossy compression, quality
+// values > 100 represent lossless compression.
 func Encode(f Format, out io.Writer, img image.Image, quality int) error {
 	switch f {
 	case Auto, Unknown, PNG:

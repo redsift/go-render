@@ -9,12 +9,13 @@ import (
 type urlList []*url.URL
 
 func (i *urlList) Set(value string) error {
-	if url, err := url.Parse(value); err != nil {
+	url, err := url.Parse(value)
+	if err != nil {
 		return fmt.Errorf("'%s' is not an valid URL: %s", value, err.Error())
-	} else {
-		*i = append(*i, url)
-		return nil
 	}
+	*i = append(*i, url)
+	return nil
+
 }
 
 func (i *urlList) String() string {
@@ -25,7 +26,7 @@ func (i *urlList) IsCumulative() bool {
 	return true
 }
 
-func URLSList(s kingpin.Settings) (target *[]*url.URL) {
+func urlsList(s kingpin.Settings) (target *[]*url.URL) {
 	target = new([]*url.URL)
 	s.SetValue((*urlList)(target))
 	return

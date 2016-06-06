@@ -24,17 +24,17 @@ import (
 )
 
 var (
-	// Webkit reports failure of of the page load
+	// ErrLoadFailed signifies that Webkit reports failure of of the page load
 	ErrLoadFailed = errors.New("load-failed")
-	// View has already been closed, not further operations allowed
+	// ErrViewClosed signifies that the View has already been closed, not further operations allowed
 	ErrViewClosed = errors.New("view-closed")
-	// Supplied timeout has been triggered
+	// ErrTimeout signifies that the supplied timeout has been triggered
 	ErrTimeout = errors.New("timeout")
-	// Snapshot did not return a usable image
+	// ErrNoImage signifies that snapshot did not return a usable image
 	ErrNoImage = errors.New("no-image")
-	// No timing information available
+	// ErrNoTiming signifies that no timing information is available
 	ErrNoTiming = errors.New("load-not-timed")
-	// ErrNoX Did not find a usable X display server
+	// ErrNoX signifies that we did not find a usable X display server
 	ErrNoX = errors.New("no-x-display")
 )
 
@@ -207,7 +207,7 @@ func (v *View) EvaluateJavaScript(script string, t *time.Duration) (result inter
 	}
 }
 
-// waits for the current page to finish loading.
+// Wait for the current page to finish loading.
 func (v *View) Wait(t *time.Duration) error {
 	if v.closed {
 		return ErrViewClosed
@@ -233,25 +233,25 @@ func (v *View) Close() {
 	v.Destroy()
 }
 
-type renderer struct {
+type Renderer struct {
 	sync.Mutex
 }
 
-const ENV_DISPLAY = "DISPLAY"
-const X_LOCK_PARENT = "/tmp"
+const envDisplay = "DISPLAY"
+const xLockParent = "/tmp"
 
-func (r *renderer) waitForX() error {
-	d := os.Getenv(ENV_DISPLAY)
+func (r *Renderer) waitForX() error {
+	d := os.Getenv(envDisplay)
 	if d == "" {
-		return fmt.Errorf("No %s variable set for X", ENV_DISPLAY)
+		return fmt.Errorf("No %s variable set for X", envDisplay)
 	}
 
 	if len(d) < 2 {
-		return fmt.Errorf("%s variable %q is malformed", ENV_DISPLAY, d)
+		return fmt.Errorf("%s variable %q is malformed", envDisplay, d)
 	}
 	n := d[1:]
 
-	f := fmt.Sprintf("%s/.X%s-lock", X_LOCK_PARENT, n)
+	f := fmt.Sprintf("%s/.X%s-lock", xLockParent, n)
 
 	w, err := fsnotify.NewWatcher()
 	if err != nil {
@@ -281,7 +281,7 @@ func (r *renderer) waitForX() error {
 		}
 	}()
 
-	err = w.Add(X_LOCK_PARENT)
+	err = w.Add(xLockParent)
 	if err != nil {
 		return err
 	}
@@ -301,8 +301,8 @@ func (r *renderer) waitForX() error {
 }
 
 // NewRenderer creates a new GTK based rendering context
-func NewRenderer() (*renderer, error) {
-	r := renderer{}
+func NewRenderer() (*Renderer, error) {
+	r := Renderer{}
 
 	if err := r.waitForX(); err != nil {
 		return nil, err
@@ -314,7 +314,7 @@ func NewRenderer() (*renderer, error) {
 }
 
 // Ensure that the GTK+ main loop has started. If it has already been
-func (r *renderer) start() {
+func (r *Renderer) start() {
 	gtkOnce.Do(func() {
 		gtk.Init(nil)
 		go func() {
@@ -324,8 +324,8 @@ func (r *renderer) start() {
 	})
 }
 
-// Create a new Webkit view
-func (r *renderer) NewView(appName, appVersion string, autoLoadImages, consoleStdout bool) *View {
+// NewView creates a new Webkit view
+func (r *Renderer) NewView(appName, appVersion string, autoLoadImages, consoleStdout bool) *View {
 	c := make(chan *View, 1)
 
 	r.Lock()

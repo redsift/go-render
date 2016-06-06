@@ -28,7 +28,7 @@ var (
 	Timestamp = ""
 )
 
-const URLHelp = "URL(s) to render. If not supplied, stdin is read while open"
+const urlHelp = "URL(s) to render. If not supplied, stdin is read while open"
 
 var (
 	app             = kingpin.New("render", "Command-line WebKit based web page rendering tool.")
@@ -43,18 +43,18 @@ var (
 	snapshotQuality     = snapshotCommand.Flag("quality", "Quality of image when using lossy compression, values > 100 indicate lossless if available for the selected format").PlaceHolder("[0-100]").Default("75").Int()
 	snapshotOutput      = snapshotCommand.Flag("output", "Filename for output").Short('o').String()
 	snapshotNoImagesOpt = snapshotCommand.Flag("noimages", "Don't load images from webpage.").Bool()
-	snapshotOpt         = URLSList(snapshotCommand.Arg("url", URLHelp))
+	snapshotOpt         = urlsList(snapshotCommand.Arg("url", urlHelp))
 
 	javascriptCommand   = app.Command("javascript", "Execute javascript in the context of the page.")
 	javascriptContent   = javascriptCommand.Flag("js", "JavaScript file or string to execute").Short('j').Required().String()
 	javascriptFormat    = javascriptCommand.Flag("format", "Format the output using the given go template").Short('f').Default("").String()
 	javascriptImagesOpt = javascriptCommand.Flag("images", "Load images from webpage.").Default("false").Bool()
-	javascriptOpt       = URLSList(javascriptCommand.Arg("url", URLHelp))
+	javascriptOpt       = urlsList(javascriptCommand.Arg("url", urlHelp))
 
 	metadataCommand   = app.Command("metadata", "Get page metadata.")
 	metadataFormat    = metadataCommand.Flag("format", "Format the output using the given go template").Short('f').Default("").String()
 	metadataImagesOpt = metadataCommand.Flag("images", "Load images from webpage.").Default("false").Bool()
-	metadataOpt       = URLSList(metadataCommand.Arg("url", URLHelp))
+	metadataOpt       = urlsList(metadataCommand.Arg("url", urlHelp))
 )
 
 type timing struct {
@@ -69,6 +69,7 @@ type metadata struct {
 	Timing timing
 }
 
+// Git returns a string representing the Tag and/or Commit of the codebase that built this binary
 func Git() string {
 	if Tag == "" {
 		if Commit == "" {
@@ -79,6 +80,7 @@ func Git() string {
 	return fmt.Sprintf("%s-%s", Tag, Commit)
 }
 
+// Version returns the Git() version and build date for this binary
 func Version() string {
 	git := Git()
 	if Timestamp == "" {
