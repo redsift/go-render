@@ -1,6 +1,11 @@
 # go-render
 
-[![CircleCI](https://circleci.com/gh/Redsift/go-render.svg?style=svg)](https://circleci.com/gh/Redsift/go-render) [![Docker Repository on Quay](https://quay.io/repository/redsift/go-render/status "Docker Repository on Quay")](https://quay.io/repository/redsift/go-render)
+[![CircleCI](https://circleci.com/gh/Redsift/go-render.svg?style=svg)](https://circleci.com/gh/Redsift/go-render) 
+
+[![Docker Repository on Quay](https://quay.io/repository/redsift/go-render/status "Docker Repository on Quay")](https://quay.io/repository/redsift/go-render)
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/redsift/go-render)](https://goreportcard.com/report/github.com/redsift/go-render)
+
 
 Simple WebKit2 based headless HTML/SVG rasterizer. 
 

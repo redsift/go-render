@@ -5,7 +5,8 @@ package constants
 type Format int
 
 const (
-	Auto Format = iota
+	Unknown Format = iota
+	Auto
 	PNG
 	JPEG
 	WEBP

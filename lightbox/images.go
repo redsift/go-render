@@ -31,7 +31,7 @@ func FormatParse(n string) (Format, error) {
 	case "mono":
 		return MONO, nil
 	default:
-		return nil, fmt.Errorf("Unknown format %q", n)
+		return Unknown, fmt.Errorf("Unknown format %q", n)
 	}
 }
 
@@ -40,33 +40,33 @@ func FormatParseFromFilename(n string) (Format, error) {
 
 	switch mt {
 	case MIMEPNG:
-		return PNG
+		return PNG, nil
 	case MIMEJPEG:
-		return JPEG
+		return JPEG, nil
 	case MIMEWEBP:
-		return WEBP
+		return WEBP, nil
 	case MIMEGIF:
-		return GIF
+		return GIF, nil
 	default:
-		return nil, fmt.Errorf("Unknown extension format %q", n)
+		return Unknown, fmt.Errorf("Unknown extension format %q", n)
 	}
 }
 
-func FormatParseFromAccept(a string) Format {
+func FormatParseFromAccept(a string) (Format, error) {
 	ct := httphelp.Negotiate(a, MIMEList())
 
-	if ct == nil {
-		return nil, errors.New("No content type could be negotiated")
+	if ct == "" {
+		return Unknown, errors.New("No content type could be negotiated")
 	}
-	return PNG
+	return PNG, nil
 }
 
 func Encode(f Format, out io.Writer, img image.Image, quality int) error {
 	switch f {
-	case Auto, nil, PNG:
+	case Auto, Unknown, PNG:
 		return png.Encode(out, img)
 	case JPEG:
-		o := jpeg.Options{quality}
+		o := jpeg.Options{Quality: quality}
 		return jpeg.Encode(out, img, &o)
 	case GIF:
 		return gif.Encode(out, img, nil)
@@ -82,6 +82,4 @@ func Encode(f Format, out io.Writer, img image.Image, quality int) error {
 	default:
 		panic(fmt.Sprintf("Format %s not implemented", f))
 	}
-
-	return nil
 }

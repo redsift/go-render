@@ -4,9 +4,9 @@ package constants
 
 import "fmt"
 
-const _Format_name = "AutoPNGJPEGWEBPGIFMONO"
+const _Format_name = "UnknownAutoPNGJPEGWEBPGIFMONO"
 
-var _Format_index = [...]uint8{0, 4, 7, 11, 15, 18, 22}
+var _Format_index = [...]uint8{0, 7, 11, 14, 18, 22, 25, 29}
 
 func (i Format) String() string {
 	if i < 0 || i >= Format(len(_Format_index)-1) {

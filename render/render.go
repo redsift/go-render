@@ -199,6 +199,66 @@ func createFilename(temp *template.Template, url *url.URL, index int) string {
 	return s
 }
 
+func snapshot(url *url.URL, index int, optFmt constants.Format, t *template.Template) {
+	v := newLoadedView(url, !*snapshotNoImagesOpt)
+	defer v.Close()
+
+	i, err := v.NewSnapshot(timeoutOpt)
+	app.FatalIfError(err, "Unable to create snapshot")
+
+	if i.Pix == nil {
+		app.Fatalf("No Pix in captured image")
+	}
+
+	if i.Stride == 0 || i.Rect.Max.X == 0 || i.Rect.Max.Y == 0 {
+		app.Fatalf("No image data in captured image")
+	}
+
+	var out io.Writer
+	outFmt := optFmt
+
+	if t == nil {
+		// stdout
+		out = os.Stdout
+	} else {
+		name := createFilename(t, url, index)
+		f, err := os.Create(name)
+		app.FatalIfError(err, "Could not create image %s", name)
+		defer f.Close()
+
+		out = f
+		outFmt, _ = lightbox.FormatParseFromFilename(name)
+		if outFmt == constants.Unknown {
+			if *debugOpt {
+				fmt.Printf("Could not determine image type from filename %q, defaulting to image/png\n", name)
+			}
+			outFmt = constants.PNG
+		}
+	}
+
+	lightbox.Encode(outFmt, out, i, *snapshotQuality)
+}
+
+func javascript(url *url.URL, script string) {
+	v := newLoadedView(url, *javascriptImagesOpt)
+	defer v.Close()
+	j, err := v.EvaluateJavaScript(script, timeoutOpt)
+	app.FatalIfError(err, "Unable to execute javascript")
+
+	t := reflect.TypeOf(j)
+	if *debugOpt {
+		if j == nil {
+			fmt.Println("JavaScript returned:null")
+		} else {
+			fmt.Printf("JavaScript return type:%s, kind:%s\n", t, t.Kind())
+		}
+	}
+	if t != nil && (t.Kind() == reflect.Map || t.Kind() == reflect.Slice || t.Kind() == reflect.Array) {
+		j = formatInterface(j, *javascriptFormat)
+	}
+	fmt.Println(j)
+}
+
 func main() {
 	app.HelpFlag.Short('h')
 	app.Version(Version())
@@ -214,7 +274,6 @@ func main() {
 			}
 
 			var fnTemplate *template.Template
-
 			if imgFile := *snapshotOutput; imgFile != "" {
 				var err error
 				fnTemplate, err = template.New("").Funcs(templateFuncs).Parse(imgFile)
@@ -226,45 +285,7 @@ func main() {
 
 			i := 0
 			for u := range urls(*snapshotOpt) {
-				func(url *url.URL, index int) {
-					v := newLoadedView(url, !*snapshotNoImagesOpt)
-					defer v.Close()
-
-					i, err := v.NewSnapshot(timeoutOpt)
-					app.FatalIfError(err, "Unable to create snapshot")
-
-					if i.Pix == nil {
-						app.Fatalf("No Pix in captured image")
-					}
-
-					if i.Stride == 0 || i.Rect.Max.X == 0 || i.Rect.Max.Y == 0 {
-						app.Fatalf("No image data in captured image")
-					}
-
-					var out io.Writer
-					outFmt := optFmt
-
-					if fnTemplate == nil {
-						// stdout
-						out = os.Stdout
-					} else {
-						name := createFilename(fnTemplate, url, index)
-						f, err := os.Create(name)
-						app.FatalIfError(err, "Could not create image %s", name)
-						defer f.Close()
-
-						out = f
-						outFmt, _ = lightbox.FormatParseFromFilename(name)
-						if outFmt == nil {
-							if *debugOpt {
-								fmt.Printf("Could not determine image type from filename %q, defaulting to image/png\n", name)
-							}
-							outFmt = constants.PNG
-						}
-					}
-
-					lightbox.Encode(outFmt, out, i, *snapshotQuality)
-				}(u, i)
+				snapshot(u, i, optFmt, fnTemplate)
 				i++
 			}
 		}
@@ -281,25 +302,7 @@ func main() {
 			}
 
 			for u := range urls(*javascriptOpt) {
-				func() {
-					v := newLoadedView(u, *javascriptImagesOpt)
-					defer v.Close()
-					j, err := v.EvaluateJavaScript(script, timeoutOpt)
-					app.FatalIfError(err, "Unable to execute javascript")
-
-					t := reflect.TypeOf(j)
-					if *debugOpt {
-						if j == nil {
-							fmt.Println("JavaScript returned:null")
-						} else {
-							fmt.Printf("JavaScript return type:%s, kind:%s\n", t, t.Kind())
-						}
-					}
-					if t != nil && (t.Kind() == reflect.Map || t.Kind() == reflect.Slice || t.Kind() == reflect.Array) {
-						j = formatInterface(j, *javascriptFormat)
-					}
-					fmt.Println(j)
-				}()
+				javascript(u, script)
 			}
 		}
 	case metadataCommand.FullCommand():
