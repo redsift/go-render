@@ -40,6 +40,11 @@ func FormatParse(n string) (Format, error) {
 func FormatParseFromFilename(n string) (Format, error) {
 	mt := mime.TypeByExtension(filepath.Ext(n))
 
+	return FormatParseFromMIME(mt)
+}
+
+// FormatParseFromMIME returns a format based on the supplied MIME string
+func FormatParseFromMIME(mt string) (Format, error) {
 	switch mt {
 	case MIMEPNG:
 		return PNG, nil
@@ -50,18 +55,23 @@ func FormatParseFromFilename(n string) (Format, error) {
 	case MIMEGIF:
 		return GIF, nil
 	default:
-		return Unknown, fmt.Errorf("Unknown extension format %q", n)
+		return Unknown, fmt.Errorf("Unknown extension format %q", mt)
 	}
 }
 
 // FormatParseFromAccept returns a format based on the supplied Accept header
 func FormatParseFromAccept(a string) (Format, error) {
+	// Manual hack to check webp support before normal accept handler
+	if strings.Index(a, "webp") != -1 {
+		return WEBP, nil
+	}
+
 	ct := httphelp.Negotiate(a, MIMEList())
 
 	if ct == "" {
 		return Unknown, errors.New("No content type could be negotiated")
 	}
-	return PNG, nil
+	return FormatParseFromMIME(ct)
 }
 
 // Encode writes img in the desired image format f to the out stream. If the selected format

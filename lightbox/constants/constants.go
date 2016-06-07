@@ -30,3 +30,18 @@ var mimeList = []string{MIMEPNG, MIMEWEBP, MIMEJPEG, MIMEGIF}
 func MIMEList() []string {
 	return mimeList
 }
+
+func (f Format)MIMEString() string {
+	switch f {
+	case PNG:
+		return MIMEPNG
+	case JPEG:
+		return MIMEJPEG
+	case WEBP:
+		return MIMEWEBP
+	case GIF:
+		return MIMEGIF
+	default:
+		return "application/octet-stream"
+	}
+}

@@ -1,5 +1,5 @@
 hash: bd70318d0cc14cdcfd5aacf4151207a84218faf02a67fbc9627cb06507c7903c
-updated: 2016-06-04T09:43:45.945998746Z
+updated: 2016-06-07T11:57:58.337733588Z
 imports:
 - name: github.com/alecthomas/template
   version: a0175ee3bccc567396460bf5acd36800cb10c49c
@@ -31,7 +31,7 @@ imports:
   version: 0574c0e191634a5f4c489fb003f307d9ed6da3fd
   repo: https://github.com/Redsift/gojs
 - name: golang.org/x/sys
-  version: 076b546753157f758b316e59bcb51e6807c04057
+  version: d4feaf1a7e61e1d9e79e6c4e76c6349e9cab0a03
   subpackages:
   - unix
 - name: golang.org/x/tools
