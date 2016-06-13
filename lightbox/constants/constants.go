@@ -14,6 +14,7 @@ const (
 	WEBP
 	GIF
 	MONO
+	SVG
 )
 
 // MIME types for known image formats
@@ -22,9 +23,10 @@ const (
 	MIMEJPEG = "image/jpeg"
 	MIMEWEBP = "image/webp"
 	MIMEGIF  = "image/gif"
+	MIMESVG  = "image/svg+xml"
 )
 
-var mimeList = []string{MIMEPNG, MIMEWEBP, MIMEJPEG, MIMEGIF}
+var mimeList = []string{MIMEPNG, MIMEWEBP, MIMEJPEG, MIMESVG, MIMEGIF}
 
 // MIMEList is the MIMT ype list of all known image formats in order of preference
 func MIMEList() []string {
@@ -41,6 +43,8 @@ func (f Format)MIMEString() string {
 		return MIMEWEBP
 	case GIF:
 		return MIMEGIF
+	case SVG:
+		return MIMESVG
 	default:
 		return "application/octet-stream"
 	}

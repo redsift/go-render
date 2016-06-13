@@ -31,6 +31,8 @@ func FormatParse(n string) (Format, error) {
 		return GIF, nil
 	case "mono":
 		return MONO, nil
+	case "svg":
+		return SVG, nil
 	default:
 		return Unknown, fmt.Errorf("Unknown format %q", n)
 	}
@@ -54,6 +56,8 @@ func FormatParseFromMIME(mt string) (Format, error) {
 		return WEBP, nil
 	case MIMEGIF:
 		return GIF, nil
+	case MIMESVG:
+		return SVG, nil
 	default:
 		return Unknown, fmt.Errorf("Unknown extension format %q", mt)
 	}
@@ -79,6 +83,7 @@ func FormatParseFromAccept(a string) (Format, error) {
 // the highest compressions / lowest quality and 100 being the lowest compression / highest quality.
 // If the format supports lossless compression (e.g. WebP) in addition to lossy compression, quality
 // values > 100 represent lossless compression.
+// Note, SVG cannot be encoded
 func Encode(f Format, out io.Writer, img image.Image, quality int) error {
 	switch f {
 	case Auto, Unknown, PNG:
