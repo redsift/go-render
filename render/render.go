@@ -16,6 +16,7 @@ import (
 	"reflect"
 	"strings"
 	"text/template"
+	"golang.org/x/net/context"
 )
 
 // LIBGL_DEBUG=verbose to debug libGl issues
@@ -89,7 +90,17 @@ func Version() string {
 	return fmt.Sprintf("%s-%s", git, Timestamp)
 }
 
-func newLoadedView(url *url.URL, autoLoadImages bool) *render.View {
+
+func newContext() context.Context {
+	ctx := context.Background()
+	if t := *timeoutOpt; t > 0 {
+		ctx, _ = context.WithTimeout(ctx, t)
+	}
+
+	return ctx
+}
+
+func newLoadedView(ctx context.Context, url *url.URL, autoLoadImages bool) *render.View {
 	u := url.String()
 
 	r, err := render.NewRenderer()
@@ -104,7 +115,7 @@ func newLoadedView(url *url.URL, autoLoadImages bool) *render.View {
 	err = v.LoadURI(u)
 	app.FatalIfError(err, "Unable to request URL %q", u)
 
-	err = v.Wait(timeoutOpt)
+	err = v.Wait(ctx)
 	app.FatalIfError(err, "Unable to load page")
 
 	return v
@@ -202,10 +213,12 @@ func createFilename(temp *template.Template, url *url.URL, index int) string {
 }
 
 func snapshot(url *url.URL, index int, optFmt constants.Format, t *template.Template) {
-	v := newLoadedView(url, !*snapshotNoImagesOpt)
+	ctx := newContext()
+
+	v := newLoadedView(ctx, url, !*snapshotNoImagesOpt)
 	defer v.Close()
 
-	i, err := v.NewSnapshot(timeoutOpt)
+	i, err := v.NewSnapshot(ctx)
 	app.FatalIfError(err, "Unable to create snapshot")
 
 	if i.Pix == nil {
@@ -242,9 +255,11 @@ func snapshot(url *url.URL, index int, optFmt constants.Format, t *template.Temp
 }
 
 func javascript(url *url.URL, script string) {
-	v := newLoadedView(url, *javascriptImagesOpt)
+	ctx := newContext()
+
+	v := newLoadedView(ctx, url, *javascriptImagesOpt)
 	defer v.Close()
-	j, err := v.EvaluateJavaScript(script, timeoutOpt)
+	j, err := v.EvaluateJavaScript(ctx, script)
 	app.FatalIfError(err, "Unable to execute javascript")
 
 	t := reflect.TypeOf(j)
@@ -311,7 +326,9 @@ func main() {
 		{
 			for u := range urls(*metadataOpt) {
 				func() {
-					v := newLoadedView(u, *metadataImagesOpt)
+					ctx := newContext()
+
+					v := newLoadedView(ctx, u, *metadataImagesOpt)
 					defer v.Close()
 
 					ts, _ := v.TimeToStart()
@@ -334,3 +351,4 @@ func main() {
 		}
 	}
 }
+

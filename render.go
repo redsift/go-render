@@ -21,6 +21,7 @@ import (
 	"runtime"
 	"sync"
 	"time"
+	"golang.org/x/net/context"
 )
 
 var (
@@ -28,8 +29,6 @@ var (
 	ErrLoadFailed = errors.New("load-failed")
 	// ErrViewClosed signifies that the View has already been closed, not further operations allowed
 	ErrViewClosed = errors.New("view-closed")
-	// ErrTimeout signifies that the supplied timeout has been triggered
-	ErrTimeout = errors.New("timeout")
 	// ErrNoImage signifies that snapshot did not return a usable image
 	ErrNoImage = errors.New("no-image")
 	// ErrNoTiming signifies that no timing information is available
@@ -128,14 +127,13 @@ func (v *View) LoadHTML(content, baseURI string) error {
 	return nil
 }
 
-func (v *View) NewSnapshot(t *time.Duration) (result *image.RGBA, err error) {
+func (v *View) NewSnapshot(ctx context.Context) (result *image.RGBA, err error) {
 	if v.closed {
 		return nil, ErrViewClosed
 	}
 
 	resultChan := make(chan *image.RGBA, 1)
 	errChan := make(chan error, 1)
-	timeout := newTimeout(t)
 
 	glib.IdleAdd(func() bool {
 		v.GetSnapshot(func(img *image.RGBA, err error) {
@@ -158,19 +156,18 @@ func (v *View) NewSnapshot(t *time.Duration) (result *image.RGBA, err error) {
 		return result, nil
 	case err = <-errChan:
 		return nil, err
-	case <-timeout:
-		return nil, ErrTimeout
+	case <-ctx.Done():
+		return nil, ctx.Err()
 	}
 }
 
-func (v *View) EvaluateJavaScript(script string, t *time.Duration) (result interface{}, err error) {
+func (v *View) EvaluateJavaScript(ctx context.Context, script string) (result interface{}, err error) {
 	if v.closed {
 		return nil, ErrViewClosed
 	}
 
 	resultChan := make(chan interface{}, 1)
 	errChan := make(chan error, 1)
-	timeout := newTimeout(t)
 
 	glib.IdleAdd(func() bool {
 		v.WebView.RunJavaScript(script, func(result *gojs.Value, err error) {
@@ -202,22 +199,20 @@ func (v *View) EvaluateJavaScript(script string, t *time.Duration) (result inter
 		return result, nil
 	case err = <-errChan:
 		return nil, err
-	case <-timeout:
-		return nil, ErrTimeout
+	case <-ctx.Done():
+		return nil, ctx.Err()
 	}
 }
 
 // Wait for the current page to finish loading.
-func (v *View) Wait(t *time.Duration) error {
+func (v *View) Wait(ctx context.Context) error {
 	if v.closed {
 		return ErrViewClosed
 	}
 
-	timeout := newTimeout(t)
-
 	select {
-	case <-timeout:
-		return ErrTimeout
+	case <-ctx.Done():
+		return ctx.Err()
 	case <-v.load:
 		return v.lastLoadErr
 	}

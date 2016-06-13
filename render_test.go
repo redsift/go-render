@@ -2,9 +2,12 @@ package render
 
 import (
 	"testing"
+	"golang.org/x/net/context"
 )
 
 func TestTitle(t *testing.T) {
+	ctx := context.Background()
+
 	r, err := NewRenderer()
 	if err != nil {
 		t.Fatal(err)
@@ -16,7 +19,7 @@ func TestTitle(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := v.Wait(nil); err != nil {
+	if err := v.Wait(ctx); err != nil {
 		t.Fatal(err)
 	}
 

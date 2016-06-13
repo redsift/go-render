@@ -112,4 +112,4 @@ This library uses a version of [go-webkit2](https://github.com/sourcegraph/go-we
 # Know issues
 
 - Due to timing issues with the cleanup of the process tree, WebKit might occasionally emit errors as it shuts down. e.g. `(WebKitWebProcess:26): Gdk-WARNING **: WebKitWebProcess: Fatal IO error 11 (Resource temporarily unavailable) on X server :1.`        
-- Some URLs may not successfully snapshot. e.g. `docker run quay.io/redsift/go-render snapshot www.shazam.com` -> `render: error: Unable to create snapshot: There was an error creating the snapshot`
+- Some URLs may not successfully snapshot. e.g. `docker run quay.io/redsift/go-render snapshot www.shazam.com` -> `render: error: Unable to create snapshot: There was an error creating the snapshot`. This is usually due to a 0x0 pixel display at the time of invoking the snapshot.
