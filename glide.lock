@@ -1,5 +1,5 @@
-hash: bd70318d0cc14cdcfd5aacf4151207a84218faf02a67fbc9627cb06507c7903c
-updated: 2016-06-07T11:57:58.337733588Z
+hash: e84e3c7613de47aaf22884d517023eb87465249404535f60d869d96f71c1902d
+updated: 2016-06-13T13:09:06.468008953Z
 imports:
 - name: github.com/alecthomas/template
   version: a0175ee3bccc567396460bf5acd36800cb10c49c
@@ -30,12 +30,16 @@ imports:
 - name: github.com/sqs/gojs
   version: 0574c0e191634a5f4c489fb003f307d9ed6da3fd
   repo: https://github.com/Redsift/gojs
+- name: golang.org/x/net
+  version: 3f122ce3dbbe488b7e6a8bdb26f41edec852a40b
+  subpackages:
+  - context
 - name: golang.org/x/sys
   version: d4feaf1a7e61e1d9e79e6c4e76c6349e9cab0a03
   subpackages:
   - unix
 - name: golang.org/x/tools
-  version: b41cbfc0fac050e3a416b4f51df202a101cd2aa5
+  version: 95963e031d86b0e7dafe40fde044d7f610404855
   subpackages:
   - cmd/stringer
 - name: gopkg.in/alecthomas/kingpin.v2

@@ -20,4 +20,4 @@ import:
   - package: github.com/chai2010/webp
   - package: golang.org/x/tools/cmd/stringer
   - package: github.com/ricallinson/httphelp
-
+  - package: golang.org/x/net/context
