@@ -266,17 +266,22 @@ func (r *Renderer) waitForX() error {
 	go func() {
 		for {
 			select {
-			case event := <-w.Events:
+			case event, ok := <-w.Events:
+				if !ok {
+					return
+				}
 				if event.Op&fsnotify.Create == fsnotify.Create {
 					if event.Name == f {
 						// got it
 						close(found)
+						return
 					}
 				}
-			case err := <-w.Errors:
-				if err != nil {
-					panic(err)
-				} // else the watcher was closed
+			case err, ok := <-w.Errors:
+				if !ok {
+					return
+				}
+				panic(err)
 			}
 		}
 	}()
