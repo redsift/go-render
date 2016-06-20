@@ -334,7 +334,6 @@ func (r *Renderer) NewView(appName, appVersion string, autoLoadImages, consoleSt
 		wctx := webkit2.DefaultWebContext()
 		wctx.SetCacheModel(webkit2.DocumentBrowserCacheModel)
 		if len(languages) > 0 {
-			fmt.Println(languages)
 			wctx.SetPreferredLanguages(languages)
 		}
 

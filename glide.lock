@@ -1,5 +1,5 @@
 hash: 37b9453c0186374dce16451e24f5edd855ed2f46fb263944378a92131b1963a2
-updated: 2016-06-20T16:37:45.958078345Z
+updated: 2016-06-20T17:15:57.202047568Z
 imports:
 - name: github.com/alecthomas/template
   version: a0175ee3bccc567396460bf5acd36800cb10c49c
@@ -20,7 +20,7 @@ imports:
 - name: github.com/fsnotify/fsnotify
   version: 30411dbcefb7a1da7e84f75530ad3abe4011b4f8
 - name: github.com/redsift/go-webkit2
-  version: f5bff66913b2740ea60a81a2bbf1c88bb264d054
+  version: 5fa9b0d9a765dc973921cac7fed60910b036a7fc
   repo: https://github.com/Redsift/go-webkit2
   subpackages:
   - webkit2
