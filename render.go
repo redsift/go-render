@@ -9,7 +9,7 @@ package render
 import (
 	"errors"
 	"fmt"
-	"github.com/auroralaboratories/go-webkit2/webkit2"
+	"github.com/redsift/go-webkit2/webkit2"
 	"github.com/auroralaboratories/gotk3/glib"
 	"github.com/auroralaboratories/gotk3/gtk"
 	"github.com/fsnotify/fsnotify"

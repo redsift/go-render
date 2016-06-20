@@ -10,7 +10,8 @@ import:
     # Patched version to compile against
   - package: github.com/sqs/gojs
     repo: https://github.com/Redsift/gojs
-  - package: github.com/auroralaboratories/go-webkit2/webkit2
+  - package: github.com/redsift/go-webkit2/webkit2
+    repo: https://github.com/Redsift/go-webkit2
   - package: github.com/auroralaboratories/gotk3/cairo
   - package: github.com/auroralaboratories/gotk3/gdk
   - package: github.com/auroralaboratories/gotk3/glib

@@ -1,5 +1,5 @@
-hash: e84e3c7613de47aaf22884d517023eb87465249404535f60d869d96f71c1902d
-updated: 2016-06-13T13:09:06.468008953Z
+hash: 37b9453c0186374dce16451e24f5edd855ed2f46fb263944378a92131b1963a2
+updated: 2016-06-20T16:37:45.958078345Z
 imports:
 - name: github.com/alecthomas/template
   version: a0175ee3bccc567396460bf5acd36800cb10c49c
@@ -7,10 +7,6 @@ imports:
   - parse
 - name: github.com/alecthomas/units
   version: 2efee857e7cfd4f3d0138cc3cbb1b4966962b93a
-- name: github.com/auroralaboratories/go-webkit2
-  version: a72bc98e210736c0d06505c4e78dd37701f2fcd6
-  subpackages:
-  - webkit2
 - name: github.com/auroralaboratories/gotk3
   version: 518a3667b08838db13da8aee8d6e129cc97264db
   subpackages:
@@ -23,23 +19,28 @@ imports:
   version: dd526bdb977b38d44bf551e20a298c3d5e0cdff1
 - name: github.com/fsnotify/fsnotify
   version: 30411dbcefb7a1da7e84f75530ad3abe4011b4f8
+- name: github.com/redsift/go-webkit2
+  version: f5bff66913b2740ea60a81a2bbf1c88bb264d054
+  repo: https://github.com/Redsift/go-webkit2
+  subpackages:
+  - webkit2
 - name: github.com/ricallinson/httphelp
   version: f8740e04d1c731b44cf4ab02c6bd9c04c54830b2
 - name: github.com/satori/go.uuid
-  version: f9ab0dce87d815821e221626b772e3475a0d2749
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
 - name: github.com/sqs/gojs
   version: 0574c0e191634a5f4c489fb003f307d9ed6da3fd
   repo: https://github.com/Redsift/gojs
 - name: golang.org/x/net
-  version: 3f122ce3dbbe488b7e6a8bdb26f41edec852a40b
+  version: 8bf2b39827dbadfd566c4fae7a8790d12be8b23c
   subpackages:
   - context
 - name: golang.org/x/sys
-  version: d4feaf1a7e61e1d9e79e6c4e76c6349e9cab0a03
+  version: 62bee037599929a6e9146f29d10dd5208c43507d
   subpackages:
   - unix
 - name: golang.org/x/tools
-  version: 95963e031d86b0e7dafe40fde044d7f610404855
+  version: a2a552218a0e22e6fb22469f49ef371b492f6178
   subpackages:
   - cmd/stringer
 - name: gopkg.in/alecthomas/kingpin.v2
