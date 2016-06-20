@@ -38,6 +38,7 @@ var (
 	uaAppVersionOpt = app.Flag("user-agent-version", "User agent application version.").Default(Tag).String()
 	consoleOpt      = app.Flag("console", "Output webpage console to stdout.").Default("false").Bool()
 	timeoutOpt      = app.Flag("timeout", "Timeout for page load.").Short('t').Duration()
+	languageOpt 	= app.Flag("accept-language", "Comma seperated list of Accept-Languages.").String()
 
 	snapshotCommand     = app.Command("snapshot", "Generate a snapshot of the page.")
 	snapshotFormat      = snapshotCommand.Flag("format", "File format for output").Short('f').Default("auto").Enum("auto", "png", "jpeg", "webp", "gif", "mono")
@@ -106,7 +107,7 @@ func newLoadedView(ctx context.Context, url *url.URL, autoLoadImages bool) *rend
 	r, err := render.NewRenderer()
 	app.FatalIfError(err, "Unable to create renderer")
 
-	v := r.NewView(*uaAppNameOpt, *uaAppVersionOpt, autoLoadImages, *consoleOpt)
+	v := r.NewView(*uaAppNameOpt, *uaAppVersionOpt, autoLoadImages, *consoleOpt, strings.Split(*languageOpt, ","))
 
 	if *debugOpt {
 		fmt.Printf("Loading URL:%q, Images:%t\n", u, autoLoadImages)

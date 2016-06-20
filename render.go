@@ -325,13 +325,20 @@ func (r *Renderer) start() {
 }
 
 // NewView creates a new Webkit view
-func (r *Renderer) NewView(appName, appVersion string, autoLoadImages, consoleStdout bool) *View {
+func (r *Renderer) NewView(appName, appVersion string, autoLoadImages, consoleStdout bool, languages []string) *View {
 	c := make(chan *View, 1)
 
 	r.Lock()
 
 	glib.IdleAdd(func() bool {
-		webView := webkit2.NewWebView()
+		wctx := webkit2.DefaultWebContext()
+		wctx.SetCacheModel(webkit2.DocumentBrowserCacheModel)
+		if len(languages) > 0 {
+			fmt.Println(languages)
+			wctx.SetPreferredLanguages(languages)
+		}
+
+		webView := webkit2.NewWebViewWithContext(wctx)
 		settings := webView.Settings()
 		settings.SetAutoLoadImages(autoLoadImages)
 		settings.SetEnableWriteConsoleMessagesToStdout(consoleStdout)
