@@ -54,8 +54,8 @@ function show_help() {
 }
 
 # $1 : relative filename
-function get_abs_filename() {
-  echo "$(cd "$(dirname "$1")" && pwd)/$(basename "$1")"
+function get_abs_path() {
+  echo "$(cd "$(dirname "$1")" && pwd)"
 }
 
 ## Main
@@ -86,8 +86,9 @@ while [ $# -gt 0 ]; do
       ;;
     *)
         if [ -r "$1" ] ; then
-        	abs_file=$(get_abs_filename "$1")
-        	print_image "$1" 1 "$(docker run --rm quay.io/redsift/go-render snapshot file://$abs_file | base64)"
+        	abs_file=$(get_abs_path "$1")
+        	fn=$(basename "$1")
+        	print_image "$1" 1 "$(docker run --rm -v $abs_file:/run/render quay.io/redsift/go-render snapshot file:///run/render/$fn | base64)"
         else
             print_image "$1" 1 "$(docker run --rm quay.io/redsift/go-render snapshot $1 | base64)"
         fi
