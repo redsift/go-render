@@ -1,5 +1,5 @@
-hash: 37b9453c0186374dce16451e24f5edd855ed2f46fb263944378a92131b1963a2
-updated: 2016-06-20T17:54:05.220965472Z
+hash: 6dd819f9033cad53c418dd24a47e267eece67f04dbac4208f042dd2d0289c653
+updated: 2016-08-09T11:39:00.559489941+01:00
 imports:
 - name: github.com/alecthomas/template
   version: a0175ee3bccc567396460bf5acd36800cb10c49c
@@ -16,33 +16,38 @@ imports:
   - gtk
   - pango
 - name: github.com/chai2010/webp
-  version: dd526bdb977b38d44bf551e20a298c3d5e0cdff1
+  version: 4b9518ea9095ac7905fd33019eea910bedc5c538
 - name: github.com/fsnotify/fsnotify
-  version: 30411dbcefb7a1da7e84f75530ad3abe4011b4f8
+  version: a8a77c9133d2d6fd8334f3260d06f60e8d80a5fb
+- name: github.com/redsift/go-render
+  version: d0a5f5730d69dc356ed822421474a47912cc92c6
+  subpackages:
+  - lightbox/constants
+  - lightbox
 - name: github.com/redsift/go-webkit2
   version: 190c9fc390dfb5b21fb3e228546873229b5ef636
-  repo: https://github.com/Redsift/go-webkit2
+  repo: https://github.com/redsift/go-webkit2
   subpackages:
   - webkit2
 - name: github.com/ricallinson/httphelp
   version: f8740e04d1c731b44cf4ab02c6bd9c04c54830b2
 - name: github.com/satori/go.uuid
-  version: 879c5887cd475cd7864858769793b2ceb0d44feb
+  version: 0aa62d5ddceb50dbcb909d790b5345affd3669b6
 - name: github.com/sqs/gojs
   version: 0574c0e191634a5f4c489fb003f307d9ed6da3fd
-  repo: https://github.com/Redsift/gojs
+  repo: https://github.com/redsift/gojs
 - name: golang.org/x/net
-  version: 8bf2b39827dbadfd566c4fae7a8790d12be8b23c
+  version: 075e191f18186a8ff2becaf64478e30f4545cdad
   subpackages:
   - context
 - name: golang.org/x/sys
-  version: 62bee037599929a6e9146f29d10dd5208c43507d
+  version: a646d33e2ee3172a661fc09bca23bb4889a41bc8
   subpackages:
   - unix
 - name: golang.org/x/tools
-  version: a2a552218a0e22e6fb22469f49ef371b492f6178
+  version: 72064bd64745c21ad7fe43d550d08e8f07bf4f73
   subpackages:
   - cmd/stringer
 - name: gopkg.in/alecthomas/kingpin.v2
-  version: 8cccfa8eb2e3183254457fb1749b2667fbc364c7
+  version: e5900212cbf65b181d3d8e08308ef06a01d117cf
 devImports: []
