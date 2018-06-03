@@ -30,7 +30,7 @@ RUN rm -f /etc/cron.hourly/* /etc/cron.daily/* /etc/cron.weekly/*  /etc/cron.mon
 
 # Install glide for Go dependency management
 RUN cd /tmp && \
-	curl -L https://github.com/Masterminds/glide/releases/download/$GLIDE/glide-$GLIDE-linux-amd64.tar.gz -o glide.tar.gz && \
+	curl -L https://github.com/Masterminds/glide/releases/download/v$GLIDE/glide-v$GLIDE-linux-amd64.tar.gz -o glide.tar.gz && \
 	tar -xf glide.tar.gz && \
 	cp /tmp/linux-amd64/glide /usr/local/bin
 
