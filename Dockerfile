@@ -9,7 +9,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     	pip install dockerize && \
     apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-ENV GO_VERSION=1.6.2 GLIDE=0.10.2
+ENV GO_VERSION=1.6.2 GLIDE=0.13.1
 
 # Go ENV vars
 ENV GOPATH=/opt/gopath PATH=$PATH:/usr/local/go/bin
