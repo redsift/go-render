@@ -26,7 +26,7 @@ jobs:
     shell: /bin/bash
     working_directory: /opt/gopath/src/github.com/redsift/go-render
     docker:
-      - image: quay.io/redsift/buildos-go-alpine
+      - image: quay.io/redsift/buildos-go
         auth:
           username: $QUAY_USER
           password: $QUAY_PASS
