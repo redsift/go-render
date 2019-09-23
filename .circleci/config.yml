@@ -1,0 +1,52 @@
+version: 2.1
+commands:
+  set_build_environment:
+    name: Set environment variables for build
+    command: |-
+      cat >> $BASH_ENV << EOF
+      set -a
+      S6_V=v1.17.2.0
+      BUILD_CONTAINER_NAME="quay.io/redsift/go-render-build"
+      CONTAINER_NAME="quay.io/redsift/go-render"
+      BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+      CIRCLE_ARTIFACTS=/artifacts
+      COMMIT_SHA1=${CIRCLE_SHA1:0:7}
+      VERSION=${CIRCLE_TAG:=$CIRCLE_BRANCH}-${COMMIT_SHA1}
+      GOPRIVATE="github.com/redsift/*"
+      SERVICE_NAME="render"
+      set +a
+      EOF
+  configure_git:
+    description: Configure git
+    steps:
+      - run: git config --global url."https://${GITHUB_HTTP_TOKEN}:@github.com".insteadOf "https://github.com"
+      - run: git config --global url."https://${GITHUB_HTTP_TOKEN}:@github.com/".insteadOf "git@github.com:"
+jobs:
+  build:
+    shell: /bin/bash
+    working_directory: /opt/gopath/src/github.com/redsift/go-render
+    docker:
+      - image: quay.io/redsift/buildos-go-alpine
+        auth:
+          username: $QUAY_USER
+          password: $QUAY_PASS
+    steps:
+      - set_build_environment
+      - configure_git
+      - checkout
+      - run: git fetch --tags
+      - run: glide install
+      - run: go install -ldflags "-X main.Timestamp=`date -u '+%Y-%m-%d_%I:%M:%S%p'` -X main.Tag=$TAG -X main.Commit=$COMMIT_SHA1" github.com/redsift/go-render/render
+      - run: /opt/gopath/bin/render --version
+      - run: go test github.com/redsift/go-render
+      - persist_to_workspace:
+          root: /
+          paths:
+            - artifacts
+
+workflows:
+  version: 2.1
+  build-and-deploy:
+    jobs:
+      - build:
+          context: org-global
