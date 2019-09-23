@@ -1,8 +1,8 @@
 version: 2.1
 commands:
   set_build_environment:
-    name: Set environment variables for build
-    command: |-
+    description: Set environment variables for build
+    steps: |-
       cat >> $BASH_ENV << EOF
       set -a
       BUILD_CONTAINER_NAME="quay.io/redsift/go-render-build"
