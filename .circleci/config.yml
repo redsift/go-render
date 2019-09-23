@@ -2,19 +2,20 @@ version: 2.1
 commands:
   set_build_environment:
     description: Set environment variables for build
-    steps: |
-      cat >> $BASH_ENV << EOF
-      set -a
-      BUILD_CONTAINER_NAME="quay.io/redsift/go-render-build"
-      CONTAINER_NAME="quay.io/redsift/go-render"
-      BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-      CIRCLE_ARTIFACTS=/artifacts
-      COMMIT_SHA1=${CIRCLE_SHA1:0:7}
-      VERSION=${CIRCLE_TAG:=$CIRCLE_BRANCH}-${COMMIT_SHA1}
-      GOPRIVATE="github.com/redsift/*"
-      SERVICE_NAME="render"
-      set +a
-      EOF
+    steps:
+      - run: |
+          cat >> $BASH_ENV \<< EOF
+          set -a
+          BUILD_CONTAINER_NAME="quay.io/redsift/go-render-build"
+          CONTAINER_NAME="quay.io/redsift/go-render"
+          BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          CIRCLE_ARTIFACTS=/artifacts
+          COMMIT_SHA1=${CIRCLE_SHA1:0:7}
+          VERSION=${CIRCLE_TAG:=$CIRCLE_BRANCH}-${COMMIT_SHA1}
+          GOPRIVATE="github.com/redsift/*"
+          SERVICE_NAME="render"
+          set +a
+          EOF
   configure_git:
     description: Configure git
     steps:
