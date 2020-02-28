@@ -1,6 +1,6 @@
 # go-render
 
-[![CircleCI](https://circleci.com/gh/Redsift/go-render.svg?style=svg)](https://circleci.com/gh/Redsift/go-render) 
+[![CircleCI](https://circleci.com/gh/redsift/go-render.svg?style=svg)](https://circleci.com/gh/redsift/go-render) 
 
 [![Docker Repository on Quay](https://quay.io/repository/redsift/go-render/status "Docker Repository on Quay")](https://quay.io/repository/redsift/go-render)
 
